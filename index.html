@@ -243,7 +243,74 @@
     <div class="sheet-title" id="sheetTitle">Add Exercise</div>
     <div class="form-group">
       <label class="form-label">Exercise name</label>
-      <input class="form-input" id="exName" placeholder="e.g. Bench Press" maxlength="60" />
+      <select class="form-input" id="exNameSelect" onchange="handleExNameSelect()">
+        <option value="">Select exercise...</option>
+        <optgroup label="Chest">
+          <option>Bench Press</option>
+          <option>Incline Bench Press</option>
+          <option>Decline Bench Press</option>
+          <option>Dumbbell Bench Press</option>
+          <option>Incline Dumbbell Press</option>
+          <option>Chest Fly</option>
+          <option>Cable Crossover</option>
+          <option>Push-Up</option>
+          <option>Dips (Chest)</option>
+        </optgroup>
+        <optgroup label="Back">
+          <option>Deadlift</option>
+          <option>Pull-Up</option>
+          <option>Lat Pulldown</option>
+          <option>Seated Cable Row</option>
+          <option>Barbell Row</option>
+          <option>Dumbbell Row</option>
+          <option>T-Bar Row</option>
+          <option>Face Pull</option>
+          <option>Back Extension</option>
+        </optgroup>
+        <optgroup label="Shoulders">
+          <option>Overhead Press</option>
+          <option>Dumbbell Shoulder Press</option>
+          <option>Arnold Press</option>
+          <option>Lateral Raise</option>
+          <option>Front Raise</option>
+          <option>Rear Delt Fly</option>
+          <option>Shrugs</option>
+          <option>Upright Row</option>
+        </optgroup>
+        <optgroup label="Arms">
+          <option>Barbell Curl</option>
+          <option>Dumbbell Curl</option>
+          <option>Hammer Curl</option>
+          <option>Preacher Curl</option>
+          <option>Tricep Pushdown</option>
+          <option>Overhead Tricep Extension</option>
+          <option>Skull Crushers</option>
+          <option>Close-Grip Bench Press</option>
+        </optgroup>
+        <optgroup label="Legs">
+          <option>Squat</option>
+          <option>Front Squat</option>
+          <option>Leg Press</option>
+          <option>Leg Extension</option>
+          <option>Leg Curl</option>
+          <option>Romanian Deadlift</option>
+          <option>Lunges</option>
+          <option>Bulgarian Split Squat</option>
+          <option>Hip Thrust</option>
+          <option>Calf Raise</option>
+          <option>Hack Squat</option>
+        </optgroup>
+        <optgroup label="Core">
+          <option>Plank</option>
+          <option>Crunches</option>
+          <option>Hanging Leg Raise</option>
+          <option>Cable Crunch</option>
+          <option>Russian Twist</option>
+          <option>Ab Wheel</option>
+        </optgroup>
+        <option value="__custom__">Custom / Other...</option>
+      </select>
+      <input class="form-input" id="exName" placeholder="Enter exercise name" maxlength="60" style="margin-top:8px;display:none" />
     </div>
     <div class="form-group">
       <label class="form-label">Type</label>
@@ -688,6 +755,15 @@ window.editEx = function(dayKey, idx) {
   document.getElementById('sheetTitle').textContent = 'Edit Exercise';
   document.getElementById('saveBtn').textContent = 'Update Exercise';
   document.getElementById('exName').value  = ex.name;
+  const nameSel = document.getElementById('exNameSelect');
+  const matchOpt = Array.from(nameSel.options).find(o => o.value === ex.name);
+  if (matchOpt) {
+    nameSel.value = ex.name;
+    document.getElementById('exName').style.display='none';
+  } else {
+    nameSel.value = '__custom__';
+    document.getElementById('exName').style.display='block';
+  }
   document.getElementById('exSets').value  = ex.sets;
   document.getElementById('exReps').value  = ex.reps;
   document.getElementById('exNotes').value = ex.notes || '';
@@ -724,6 +800,8 @@ window.closeDayOverlay = function() { document.getElementById('dayOverlay').styl
 function resetSheetFields() {
   ['exName','exNotes','machineName','miscDesc'].forEach(id => document.getElementById(id).value='');
   ['exSets','exReps','dbWeight','machWeight','miscWeight'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('exNameSelect').value='';
+  document.getElementById('exName').style.display='none';
   document.getElementById('exUnit').value='lb';
   document.getElementById('exUnitMulti').value='lb';
   document.getElementById('dbTotal').textContent='0';
@@ -733,6 +811,19 @@ function resetSheetFields() {
   applyMachMultiUI();
   setType('barbell'); renderBb();
 }
+
+window.handleExNameSelect = function() {
+  const sel = document.getElementById('exNameSelect').value;
+  const customInput = document.getElementById('exName');
+  if (sel === '__custom__') {
+    customInput.style.display='block';
+    customInput.value='';
+    customInput.focus();
+  } else {
+    customInput.style.display='none';
+    customInput.value = sel;
+  }
+};
 
 document.getElementById('addOverlay').addEventListener('click', e => { if(e.target===document.getElementById('addOverlay')) window.closeSheet(); });
 document.getElementById('dayOverlay').addEventListener('click', e => { if(e.target===document.getElementById('dayOverlay')) window.closeDayOverlay(); });

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'platemate-v11';
+const CACHE_NAME = 'platemate-v12';
 const ASSETS = [
   './',
   './index.html',
