@@ -349,7 +349,7 @@
         <div class="bb-side right" id="bbRight"></div>
       </div>
       <div class="pill-row" id="bbPills"></div>
-      <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Tap plate to add &middot; tap plate on bar to remove</div>
+      <div style="font-size:14px;color:var(--gold);opacity:0.8;margin-bottom:8px;text-align:center;font-weight:500;letter-spacing:0.2px">Tap plate to add &middot; tap plate on bar to remove</div>
       <div style="font-size:15px;color:var(--gold);font-weight:600;margin-bottom:14px">Total: <span id="bbTotal">45</span> lb</div>
     </div>
     <div id="secDumbbell" style="display:none">
@@ -407,8 +407,8 @@
       </div>
     </div>
     <div class="form-row-3" style="margin-bottom:14px">
-      <div><label class="form-label">Sets</label><input class="form-input" type="number" id="exSets" placeholder="3" min="1" /></div>
-      <div><label class="form-label">Reps</label><input class="form-input" type="number" id="exReps" placeholder="10" min="1" /></div>
+      <div><label class="form-label">Sets</label><input class="form-input" type="number" id="exSets" placeholder="3" /></div>
+      <div><label class="form-label">Reps</label><input class="form-input" type="number" id="exReps" placeholder="10" /></div>
       <div><label class="form-label">Unit</label>
         <select class="form-input" id="exUnit"><option value="lb">lb</option><option value="kg">kg</option></select>
       </div>
@@ -555,78 +555,18 @@
   </div>
 </div>
 
-<!-- ADD TEMPLATE EXERCISE OVERLAY -->
+<!-- ADD TEMPLATE EXERCISE OVERLAY — category picker only; real sheets handle the rest -->
 <div class="overlay" id="templateExOverlay">
   <div class="sheet">
     <div class="sheet-handle"></div>
     <div class="sheet-title">Add to Template</div>
-    <div class="form-group">
-      <label class="form-label">Category</label>
-      <div class="type-tabs" id="tmplCatTabs">
-        <div class="type-tab active" onclick="setTmplCat('lifting')">Lifting</div>
-        <div class="type-tab" onclick="setTmplCat('cardio')">Cardio</div>
-      </div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:18px">Choose what to add:</p>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <button class="btn-gold" style="font-size:15px;padding:16px" onclick="openTemplateLifting()">&#127947; Lifting Exercise</button>
+      <button class="btn-grey" style="font-size:15px;padding:16px" onclick="openTemplateCardio()">&#127939; Cardio Session</button>
     </div>
-
-    <!-- LIFTING FIELDS -->
-    <div id="tmplLiftingFields">
-      <div class="form-group">
-        <label class="form-label">Exercise name</label>
-        <input class="form-input" id="tmplExName" placeholder="e.g. Bench Press" maxlength="60" />
-      </div>
-      <div class="form-group">
-        <label class="form-label">Type</label>
-        <select class="form-input" id="tmplExType">
-          <option value="barbell">Barbell</option>
-          <option value="dumbbell">Dumbbell</option>
-          <option value="machine">Machine</option>
-          <option value="misc">Misc</option>
-        </select>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-        <div><label class="form-label">Default Sets</label><input class="form-input" type="number" id="tmplExSets" placeholder="3" min="1" /></div>
-        <div><label class="form-label">Default Reps</label><input class="form-input" type="number" id="tmplExReps" placeholder="10" min="1" /></div>
-      </div>
-    </div>
-
-    <!-- CARDIO FIELDS -->
-    <div id="tmplCardioFields" style="display:none">
-      <div class="form-group">
-        <label class="form-label">Activity type</label>
-        <select class="form-input" id="tmplCardioType">
-          <option value="" disabled selected>Select activity...</option>
-          <option>Boxing</option>
-          <option>Cycling (outdoor)</option>
-          <option>Elliptical</option>
-          <option>Hiking</option>
-          <option>HIIT</option>
-          <option>Jump Rope</option>
-          <option>Rowing Machine</option>
-          <option>Running (outdoor)</option>
-          <option>Stair Climber</option>
-          <option>Stationary Bike</option>
-          <option>Swimming</option>
-          <option>Treadmill</option>
-          <option>Walking</option>
-        </select>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-        <div><label class="form-label">Duration (mins)</label><input class="form-input" type="number" id="tmplCardioMins" placeholder="30" min="0" /></div>
-        <div><label class="form-label">Distance</label><input class="form-input" type="number" id="tmplCardioDist" placeholder="0.0" min="0" step="0.1" /></div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Distance unit</label>
-        <select class="form-input" id="tmplCardioDistUnit">
-          <option value="mi">mi</option>
-          <option value="km">km</option>
-          <option value="m">m</option>
-        </select>
-      </div>
-    </div>
-
-    <div style="display:flex;gap:10px">
-      <button class="btn-grey" style="flex:1" onclick="closeTemplateExSheet()">Cancel</button>
-      <button class="btn-gold" style="flex:2" onclick="confirmAddTemplateEx()">Add</button>
+    <div style="margin-top:16px">
+      <button class="btn-grey" style="width:100%" onclick="closeTemplateExSheet()">Cancel</button>
     </div>
   </div>
 </div>
@@ -837,8 +777,8 @@ function exCardHTML(ex, i, dayKey) {
   html += '    <div><div class="ex-name">' + ex.name + sub + '</div>';
   html += '    <div><span class="ex-type">' + ex.type + '</span>' + timeStr + '</div></div>';
   html += '    <div class="ex-actions">';
-  html += '      <button class="edit-btn" onclick="editEx('' + dayKey + '',' + i + ')">Edit</button>';
-  html += '      <button class="delete-btn" onclick="delEx('' + dayKey + '',' + i + ')">&#215;</button>';
+  html += '      <button class="edit-btn" onclick="editEx(\''+dayKey+'\','+i+')">Edit</button>';
+  html += '      <button class="delete-btn" onclick="delEx(\''+dayKey+'\','+i+')">&#215;</button>';
   html += '    </div>';
   html += '  </div>';
   html += '  <div class="ex-stats">';
@@ -865,8 +805,8 @@ function cardioCardHTML(s, i, dayKey) {
   html += '    <div><div class="ex-name">' + s.type + '</div>';
   html += '    <div>' + timeStr + '</div></div>';
   html += '    <div class="ex-actions">';
-  html += '      <button class="edit-btn" onclick="editCardio('' + dayKey + '',' + i + ')">Edit</button>';
-  html += '      <button class="delete-btn" onclick="delCardio('' + dayKey + '',' + i + ')">&#215;</button>';
+  html += '      <button class="edit-btn" onclick="editCardio(\''+dayKey+'\','+i+')">Edit</button>';
+  html += '      <button class="delete-btn" onclick="delCardio(\''+dayKey+'\','+i+')">&#215;</button>';
   html += '    </div>';
   html += '  </div>';
   html += '  <div class="ex-stats">';
@@ -946,7 +886,17 @@ window.openSheet = function() {
   document.getElementById('saveBtn').textContent='Save Exercise';
   document.getElementById('addOverlay').style.display='flex';
 };
-window.closeSheet = function() { document.getElementById('addOverlay').style.display='none'; };
+window.closeSheet = function() {
+  if (templateMode) {
+    templateMode = false;
+    document.getElementById('sheetTitle').textContent = 'Add Exercise';
+    document.getElementById('saveBtn').textContent = 'Save Exercise';
+    document.getElementById('addOverlay').style.display = 'none';
+    document.getElementById('templateOverlay').style.display = 'flex';
+    return;
+  }
+  document.getElementById('addOverlay').style.display='none';
+};
 window.closeDayOverlay = function() { document.getElementById('dayOverlay').style.display='none'; };
 
 function resetSheetFields() {
@@ -1014,6 +964,19 @@ window.saveExercise = async function() {
   else if (exType==='machine'){weight=parseFloat(document.getElementById('machWeight').value)||0;machineName=document.getElementById('machineName').value.trim();}
   else {weight=parseFloat(document.getElementById('miscWeight').value)||0;miscDesc=document.getElementById('miscDesc').value.trim();}
   const entry={name,type:exType,weight,sets,reps,notes,unit,machineName,miscDesc};
+
+  // ── TEMPLATE MODE ────────────────────────────────────────────────────────────
+  if (templateMode) {
+    templateMode = false;
+    document.getElementById('sheetTitle').textContent = 'Add Exercise';
+    document.getElementById('saveBtn').textContent = 'Save Exercise';
+    currentTemplateExercises.push({ category: 'lifting', name, type: exType, weight, sets, reps, notes, unit, machineName, miscDesc });
+    window.closeSheet();
+    renderTemplateExList();
+    document.getElementById('templateOverlay').style.display = 'flex';
+    return;
+  }
+
   if (editDayKey!==null&&editIdx!==null){
     entry.ts=workouts[editDayKey][editIdx].ts;
     workouts[editDayKey][editIdx]=entry;
@@ -1045,7 +1008,7 @@ function renderHistory() {
     const label = key===todayKey() ? 'Today &mdash; ' + fmtShort(key) : fmtShort(key);
     const allItems = exs.concat(cardioSessions[key] || []);
     const timeRange = allItems.length ? fmtTimeRange(allItems) : '';
-    return '<div class="card day-card" onclick="openDayDetail('' + key + '')">'
+    return '<div class="card day-card" onclick="openDayDetail(\''+key+'\')">'
       + '<div><div class="card-title">' + label + '</div>'
       + '<div class="card-meta">' + exs.length + ' exercise' + (exs.length!==1?'s':'') + ' &middot; ' + Math.round(vol).toLocaleString() + ' lb volume' + (timeRange ? ' &middot; ' + timeRange : '') + '</div></div>'
       + '<div class="day-badge">' + exs.length + '</div></div>';
@@ -1073,7 +1036,17 @@ window.openCardioSheet = function() {
   document.getElementById('cardioDistUnit').value='mi';
   document.getElementById('cardioOverlay').style.display='flex';
 };
-window.closeCardioSheet = function() { document.getElementById('cardioOverlay').style.display='none'; };
+window.closeCardioSheet = function() {
+  if (templateMode) {
+    templateMode = false;
+    document.getElementById('cardioSheetTitle').textContent = 'Add Cardio';
+    document.getElementById('cardioSaveBtn').textContent = 'Save Cardio';
+    document.getElementById('cardioOverlay').style.display = 'none';
+    document.getElementById('templateOverlay').style.display = 'flex';
+    return;
+  }
+  document.getElementById('cardioOverlay').style.display='none';
+};
 
 window.editCardio = function(dayKey, idx) {
   const s=cardioSessions[dayKey][idx];
@@ -1101,6 +1074,19 @@ window.saveCardio = async function() {
   if(!type){alert('Please select an activity type.');return;}
   if(!mins&&!secs){alert('Please enter a duration.');return;}
   const entry={type,mins,secs,dist,dunit,cals,notes,ts:Date.now()};
+
+  // ── TEMPLATE MODE ────────────────────────────────────────────────────────────
+  if (templateMode) {
+    templateMode = false;
+    document.getElementById('cardioSheetTitle').textContent = 'Add Cardio';
+    document.getElementById('cardioSaveBtn').textContent = 'Save Cardio';
+    currentTemplateExercises.push({ category: 'cardio', name: type, type, mins, secs, dist, dunit, cals, notes });
+    window.closeCardioSheet();
+    renderTemplateExList();
+    document.getElementById('templateOverlay').style.display = 'flex';
+    return;
+  }
+
   const key=todayKey();
   if(editCardioKey!==null&&editCardioIdx!==null){
     entry.ts=cardioSessions[editCardioKey][editCardioIdx].ts;
@@ -1427,32 +1413,12 @@ window.closeTemplateSheet = function() {
   document.getElementById('templateOverlay').style.display = 'none';
 };
 
-let tmplCat = 'lifting';
-
-window.setTmplCat = function(cat) {
-  tmplCat = cat;
-  document.getElementById('tmplLiftingFields').style.display = cat === 'lifting' ? 'block' : 'none';
-  document.getElementById('tmplCardioFields').style.display  = cat === 'cardio'  ? 'block' : 'none';
-  document.querySelectorAll('#tmplCatTabs .type-tab').forEach(function(el, i) {
-    el.classList.toggle('active', ['lifting','cardio'][i] === cat);
-  });
-};
+// ── TEMPLATE MODE FLAG ────────────────────────────────────────────────────────
+// When true, the real exercise/cardio sheets save into currentTemplateExercises
+// instead of today's workout
+let templateMode = false;
 
 window.openTemplateExSheet = function() {
-  tmplCat = 'lifting';
-  document.getElementById('tmplExName').value = '';
-  document.getElementById('tmplExType').value = 'barbell';
-  document.getElementById('tmplExSets').value = '';
-  document.getElementById('tmplExReps').value = '';
-  document.getElementById('tmplCardioType').value = '';
-  document.getElementById('tmplCardioMins').value = '';
-  document.getElementById('tmplCardioDist').value = '';
-  document.getElementById('tmplCardioDistUnit').value = 'mi';
-  document.getElementById('tmplLiftingFields').style.display = 'block';
-  document.getElementById('tmplCardioFields').style.display = 'none';
-  document.querySelectorAll('#tmplCatTabs .type-tab').forEach(function(el, i) {
-    el.classList.toggle('active', i === 0);
-  });
   document.getElementById('templateExOverlay').style.display = 'flex';
 };
 window.addTemplateExercise = window.openTemplateExSheet;
@@ -1461,24 +1427,30 @@ window.closeTemplateExSheet = function() {
   document.getElementById('templateExOverlay').style.display = 'none';
 };
 
-window.confirmAddTemplateEx = function() {
-  if (tmplCat === 'lifting') {
-    const name = document.getElementById('tmplExName').value.trim();
-    const type = document.getElementById('tmplExType').value;
-    const sets = parseInt(document.getElementById('tmplExSets').value) || 3;
-    const reps = parseInt(document.getElementById('tmplExReps').value) || 10;
-    if (!name) { alert('Please enter an exercise name.'); return; }
-    currentTemplateExercises.push({ category: 'lifting', name, type, sets, reps });
-  } else {
-    const type = document.getElementById('tmplCardioType').value;
-    const mins = parseInt(document.getElementById('tmplCardioMins').value) || 0;
-    const dist = parseFloat(document.getElementById('tmplCardioDist').value) || 0;
-    const dunit = document.getElementById('tmplCardioDistUnit').value;
-    if (!type) { alert('Please select a cardio activity.'); return; }
-    currentTemplateExercises.push({ category: 'cardio', name: type, type, mins, dist, dunit });
-  }
+// Open the FULL lifting sheet in template mode
+window.openTemplateLifting = function() {
   window.closeTemplateExSheet();
-  renderTemplateExList();
+  document.getElementById('templateOverlay').style.display = 'none';
+  templateMode = true;
+  editDayKey = null; editIdx = null;
+  resetSheetFields();
+  document.getElementById('sheetTitle').textContent = 'Add to Template';
+  document.getElementById('saveBtn').textContent = 'Add to Template';
+  document.getElementById('addOverlay').style.display = 'flex';
+};
+
+// Open the FULL cardio sheet in template mode
+window.openTemplateCardio = function() {
+  window.closeTemplateExSheet();
+  document.getElementById('templateOverlay').style.display = 'none';
+  templateMode = true;
+  editCardioKey = null; editCardioIdx = null;
+  document.getElementById('cardioSheetTitle').textContent = 'Add Cardio to Template';
+  document.getElementById('cardioSaveBtn').textContent = 'Add to Template';
+  ['cardioMins','cardioSecs','cardioDist','cardioCals','cardioNotes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('cardioType').value = '';
+  document.getElementById('cardioDistUnit').value = 'mi';
+  document.getElementById('cardioOverlay').style.display = 'flex';
 };
 
 function renderTemplateExList() {
@@ -1491,9 +1463,14 @@ function renderTemplateExList() {
   currentTemplateExercises.forEach(function(ex, i) {
     let sub = '';
     if (ex.category === 'cardio') {
-      sub = 'Cardio' + (ex.mins ? ' &middot; ' + ex.mins + ' min' : '') + (ex.dist ? ' &middot; ' + ex.dist + ' ' + ex.dunit : '');
+      const durParts = [];
+      if (ex.mins) durParts.push(ex.mins + 'm');
+      if (ex.secs) durParts.push(ex.secs + 's');
+      sub = ex.type + (durParts.length ? ' &middot; ' + durParts.join(' ') : '') + (ex.dist ? ' &middot; ' + ex.dist + ' ' + ex.dunit : '') + (ex.cals ? ' &middot; ' + ex.cals + ' cal' : '');
     } else {
-      sub = (ex.type || 'lifting') + ' &middot; ' + (ex.sets || 3) + ' sets &times; ' + (ex.reps || 10) + ' reps';
+      const wLabel = ex.weight ? (ex.type === 'dumbbell' ? ex.weight + ' lb ea' : ex.weight + ' lb') : 'Bodyweight';
+      const machinePart = ex.machineName ? ' &mdash; ' + ex.machineName : ex.miscDesc ? ' &mdash; ' + ex.miscDesc : '';
+      sub = ex.type + machinePart + ' &middot; ' + (ex.sets || 3) + '&times;' + (ex.reps || 10) + ' &middot; ' + wLabel;
     }
     const icon = ex.category === 'cardio' ? '&#127939;' : '&#127947;';
     html += '<div style="display:flex;justify-content:space-between;align-items:center;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px">';
