@@ -204,21 +204,50 @@
 <div class="loading-overlay" id="loadingOverlay">
   <div style="text-align:center;margin-bottom:24px">
     <div style="font-size:32px;font-weight:700;color:var(--gold);letter-spacing:1px">Platemate</div>
-    <div style="font-size:12px;color:var(--muted);margin-top:4px">v1.0 &mdash; June 30, 2026</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:4px">v1.1 &mdash; July 2, 2026</div>
   </div>
   <div class="spinner"></div>
   <div id="changelogBox" style="display:none;margin-top:20px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 20px;max-width:300px;width:90%;text-align:left">
-    <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:10px">&#127381; What's new in v1.0 &mdash; June 30, 2026</div>
+    <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:10px">&#127381; What's new in v1.1 &mdash; July 2, 2026</div>
     <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:7px">
-      <li style="font-size:12px;color:var(--text)">&#9654; Exercise picker with search &amp; muscle group filter</li>
-      <li style="font-size:12px;color:var(--text)">&#9654; Per-set rep tracking with &#8594; All fill button</li>
-      <li style="font-size:12px;color:var(--text)">&#9654; Sets default to 4, removable per row</li>
-      <li style="font-size:12px;color:var(--text)">&#9654; Barbell plate visual — tap to add &amp; remove</li>
-      <li style="font-size:12px;color:var(--text)">&#9654; Dumbbell visual with fixed weight grid</li>
-      <li style="font-size:12px;color:var(--text)">&#9654; Create custom exercises on the fly</li>
+      <li style="font-size:12px;color:var(--text)">&#9654; Templates — create, save &amp; reuse workout plans</li>
+      <li style="font-size:12px;color:var(--text)">&#9654; Per-set weight &amp; reps inside templates</li>
+      <li style="font-size:12px;color:var(--text)">&#9654; Load any template straight from the + button</li>
+      <li style="font-size:12px;color:var(--text)">&#9654; Share templates with the community</li>
+      <li style="font-size:12px;color:var(--text)">&#9654; Tap exercise card to edit — no more Edit button</li>
+      <li style="font-size:12px;color:var(--text)">&#9654; Machine picker now full-screen like exercises</li>
+      <li style="font-size:12px;color:var(--text)">&#9654; Forgot password flow on login screen</li>
+      <li style="font-size:12px;color:var(--text)">&#9654; Log workouts from any history day</li>
     </ul>
   </div>
   <div class="loading-text" id="loadingText" style="margin-top:16px">Loading Platemate...</div>
+</div>
+
+<!-- TEMPLATES SPOTLIGHT SPLASH -->
+<div class="loading-overlay" id="templatesSplash" style="display:none;">
+  <div style="max-width:320px;width:90%;text-align:center">
+    <div style="font-size:56px;margin-bottom:12px">&#128203;</div>
+    <div style="font-size:26px;font-weight:700;color:var(--gold);margin-bottom:6px">Templates are here</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:24px">Build your perfect workout once. Use it forever.</div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 20px;text-align:left;margin-bottom:20px">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;gap:14px;align-items:flex-start">
+          <span style="font-size:22px">&#43;</span>
+          <div><div style="font-size:13px;font-weight:600;color:var(--text)">Create a template</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Name it, add exercises with per-set weights &amp; reps</div></div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start">
+          <span style="font-size:22px">&#9889;</span>
+          <div><div style="font-size:13px;font-weight:600;color:var(--text)">Use it instantly</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Tap + → Template and load your whole workout in one tap</div></div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start">
+          <span style="font-size:22px">&#127760;</span>
+          <div><div style="font-size:13px;font-weight:600;color:var(--text)">Share with the community</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Publish your templates for other Hard Work &amp; Pain athletes</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Find Templates in the nav bar &#128203;</div>
+    <div style="font-size:11px;color:var(--border)">Tap anywhere to continue</div>
+  </div>
 </div>
 
 <!-- AUTH SCREEN -->
@@ -290,6 +319,10 @@
     <button class="fab" id="todayFab" onclick="toggleTodayFab()">+</button>
     <div id="todayFabMenu" style="display:none;position:fixed;bottom:150px;right:16px;z-index:51;display:none;flex-direction:column;gap:8px;align-items:flex-end">
       <div style="display:flex;align-items:center;gap:10px">
+        <span style="background:#111;color:#f0f0f0;font-size:13px;padding:6px 12px;border-radius:20px;border:1px solid rgba(255,182,18,0.3)">Template</span>
+        <button onclick="openTemplateFromFab()" style="width:46px;height:46px;border-radius:50%;background:var(--gold);color:#000;border:none;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation">&#128203;</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
         <span style="background:#111;color:#f0f0f0;font-size:13px;padding:6px 12px;border-radius:20px;border:1px solid rgba(255,182,18,0.3)">Cardio</span>
         <button onclick="openCardioFromFab()" style="width:46px;height:46px;border-radius:50%;background:var(--gold);color:#000;border:none;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation">&#127939;</button>
       </div>
@@ -322,12 +355,22 @@
     <div class="scroll-body" id="profileBody"></div>
   </div>
 
+  <div id="tabTemplates" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+    <div class="topbar" style="justify-content:space-between">
+      <div class="topbar-title">Templates</div>
+      <button onclick="switchTemplateView('my')" id="tmplTabMy" style="background:var(--gold);border:none;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;color:#000;cursor:pointer">My Templates</button>
+      <button onclick="switchTemplateView('community')" id="tmplTabCom" style="background:none;border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer">Community</button>
+    </div>
+    <div class="scroll-body" id="templatesBody"></div>
+    <button class="fab" onclick="openCreateTemplate()">+</button>
+  </div>
+
   <nav class="bottom-nav">
-    <button class="nav-btn active" id="navToday"   onclick="switchTab('today')">  <span class="ni">&#127947;</span>Today   </button>
-    <button class="nav-btn"        id="navHistory" onclick="switchTab('history')"><span class="ni">&#128197;</span>History </button>
-    <button class="nav-btn"        id="navCardio"  onclick="switchTab('cardio')"> <span class="ni">&#127939;</span>Cardio  </button>
-    <button class="nav-btn"        id="navPr"      onclick="switchTab('pr')">     <span class="ni">&#127942;</span>PRs     </button>
-    <button class="nav-btn"        id="navProfile" onclick="switchTab('profile')"><span class="ni">&#128100;</span>Profile </button>
+    <button class="nav-btn active" id="navToday"     onclick="switchTab('today')">    <span class="ni">&#127947;</span>Today    </button>
+    <button class="nav-btn"        id="navHistory"   onclick="switchTab('history')">  <span class="ni">&#128197;</span>History  </button>
+    <button class="nav-btn"        id="navCardio"    onclick="switchTab('cardio')">   <span class="ni">&#127939;</span>Cardio   </button>
+    <button class="nav-btn"        id="navTemplates" onclick="switchTab('templates')"><span class="ni">&#128203;</span>Templates</button>
+    <button class="nav-btn"        id="navProfile"   onclick="switchTab('profile')">  <span class="ni">&#128100;</span>Profile  </button>
   </nav>
 </div>
 
@@ -538,7 +581,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBBGigDjyeo55wJQWvJkt4W-c_1cbfVsQU",
@@ -577,6 +620,7 @@ onAuthStateChanged(auth, async (user) => {
   if (user) {
     currentUser = user;
     await loadAllData();
+    await loadTemplates();
     showMain();
     renderToday(); // re-render after all data confirmed loaded
   } else {
@@ -584,15 +628,21 @@ onAuthStateChanged(auth, async (user) => {
     showAuth();
   }
   // Show changelog briefly on the loading screen
-  var CURRENT_VERSION = 'v1.0';
+  var CURRENT_VERSION = 'v1.1';
   var seenVersion = localStorage.getItem('pm_seen_version');
   if (seenVersion !== CURRENT_VERSION) {
     document.getElementById('changelogBox').style.display = 'block';
-    document.getElementById('loadingText').textContent = 'Swipe up or wait...';
+    document.getElementById('loadingText').textContent = 'Tap to see what\'s new in templates ▶';
     localStorage.setItem('pm_seen_version', CURRENT_VERSION);
-    setTimeout(function() {
+    document.getElementById('loadingOverlay').style.cursor = 'pointer';
+    document.getElementById('loadingOverlay').addEventListener('click', function() {
       document.getElementById('loadingOverlay').style.display = 'none';
-    }, 4000);
+      document.getElementById('templatesSplash').style.display = 'flex';
+      document.getElementById('templatesSplash').style.cursor = 'pointer';
+      document.getElementById('templatesSplash').addEventListener('click', function() {
+        document.getElementById('templatesSplash').style.display = 'none';
+      }, { once: true });
+    }, { once: true });
   } else {
     document.getElementById('loadingOverlay').style.display = 'none';
   }
@@ -747,18 +797,21 @@ async function deleteCardioDay(key) {
 
 // ── TABS ──────────────────────────────────────────────────────────────────────
 window.switchTab = function(tab) {
-  document.getElementById('tabToday').style.display   = tab==='today'   ? 'flex' : 'none';
-  document.getElementById('tabHistory').style.display = tab==='history' ? 'flex' : 'none';
-  document.getElementById('tabCardio').style.display  = tab==='cardio'  ? 'flex' : 'none';
-  document.getElementById('tabPr').style.display      = tab==='pr'      ? 'flex' : 'none';
-  document.getElementById('tabProfile').style.display = tab==='profile' ? 'flex' : 'none';
-  ['today','history','cardio','pr','profile'].forEach(t => {
-    document.getElementById('nav'+t[0].toUpperCase()+t.slice(1)).classList.toggle('active', t===tab);
+  document.getElementById('tabToday').style.display     = tab==='today'     ? 'flex' : 'none';
+  document.getElementById('tabHistory').style.display   = tab==='history'   ? 'flex' : 'none';
+  document.getElementById('tabCardio').style.display    = tab==='cardio'    ? 'flex' : 'none';
+  document.getElementById('tabPr') && (document.getElementById('tabPr').style.display = tab==='pr' ? 'flex' : 'none');
+  document.getElementById('tabTemplates').style.display = tab==='templates' ? 'flex' : 'none';
+  document.getElementById('tabProfile').style.display   = tab==='profile'   ? 'flex' : 'none';
+  ['today','history','cardio','templates','profile'].forEach(t => {
+    var el = document.getElementById('nav'+t[0].toUpperCase()+t.slice(1));
+    if(el) el.classList.toggle('active', t===tab);
   });
-  if (tab==='history') renderHistory();
-  if (tab==='profile') renderProfile();
-  if (tab==='cardio')  renderCardioToday();
-  if (tab==='pr')      renderPrTab();
+  if (tab==='history')   renderHistory();
+  if (tab==='profile')   renderProfile();
+  if (tab==='cardio')    renderCardioToday();
+  if (tab==='pr')        renderPrTab && renderPrTab();
+  if (tab==='templates') renderTemplates();
 };
 
 // ── DATE ──────────────────────────────────────────────────────────────────────
@@ -775,12 +828,11 @@ function exCardHTML(ex, i, dayKey) {
     : ex.weight ? `${ex.weight} lb` : 'Bodyweight';
   const sub = ex.machineName ? ` &mdash; ${ex.machineName}` : ex.miscDesc ? ` &mdash; ${ex.miscDesc}` : '';
   const notes = ex.notes ? `<div class="ex-notes">Notes: ${ex.notes}</div>` : '';
-  return `<div class="ex-card">
+  return `<div class="ex-card" onclick="editEx('${dayKey}',${i})" style="cursor:pointer">
     <div class="ex-header">
       <div><div class="ex-name">${ex.name}${sub}</div><span class="ex-type">${ex.type}</span></div>
       <div class="ex-actions">
-        <button class="edit-btn" onclick="editEx('${dayKey}',${i})">Edit</button>
-        <button class="delete-btn" onclick="delEx('${dayKey}',${i})">&#215;</button>
+        <button class="delete-btn" onclick="event.stopPropagation();delEx('${dayKey}',${i})">&#215;</button>
       </div>
     </div>
     <div class="ex-stats">
@@ -1131,7 +1183,14 @@ function renderCardioToday() {
 function renderProfile() {
   const days=Object.keys(workouts);
   const totalEx=days.reduce((a,k)=>a+workouts[k].length,0);
-  const totalVol=days.reduce((a,k)=>a+workouts[k].reduce((b,e)=>b+(e.type==='dumbbell'?e.weight*2:e.weight)*e.sets*e.reps,0),0);
+  const totalVol=days.reduce((a,k)=>a+workouts[k].reduce((b,e)=>{
+    const repsArr=Array.isArray(e.reps)?e.reps:Array(e.sets||0).fill(e.reps||0);
+    const vol=repsArr.reduce((s,r,i)=>{
+      const w=Array.isArray(e.setWeights)&&e.setWeights[i]?e.setWeights[i]:(e.type==='dumbbell'?e.weight*2:e.weight)||0;
+      return s+(w||0)*(r||0);
+    },0);
+    return b+vol;
+  },0),0);
   const prs={};
   days.forEach(k=>workouts[k].forEach(e=>{const w=e.type==='dumbbell'?e.weight*2:e.weight;if(!prs[e.name]||prs[e.name]<w)prs[e.name]=w;}));
   const prHTML=Object.entries(prs).sort((a,b)=>b[1]-a[1]).slice(0,10)
@@ -1176,6 +1235,13 @@ window.openCardioFromFab = function() {
   document.getElementById('todayFabMenu').style.display = 'none';
   document.getElementById('todayFab').textContent = '+';
   window.openCardioSheet();
+};
+window.openTemplateFromFab = function() {
+  fabOpen = false;
+  document.getElementById('todayFabMenu').style.display = 'none';
+  document.getElementById('todayFab').textContent = '+';
+  // Show template picker — list of my templates to pick from
+  openTemplatePicker();
 };
 
 // ── PERSONAL RECORDS ──────────────────────────────────────────────────────────
@@ -1436,6 +1502,14 @@ let exSearchOpen = false;
 let exPickerMode = 'lifting'; // 'lifting' or 'cardio'
 
 function setExNameDisplay(name) {
+  if (window._templatePickerMode) {
+    window._templatePickerMode = false;
+    templateExercises.push({ name: name, sets: 4, reps: 10, weight: 0, type: 'barbell', setData: [{weight:0,reps:10},{weight:0,reps:10},{weight:0,reps:10},{weight:0,reps:10}] });
+    window.closeExPicker();
+    document.getElementById('createTemplateOverlay').style.display = 'flex';
+    renderTemplateExList();
+    return;
+  }
   document.getElementById('exName').value = name;
   document.getElementById('exNameDisplayText').textContent = name || 'Select exercise...';
   document.getElementById('exNameDisplay').style.color = name ? 'var(--text)' : 'var(--muted)';
@@ -1611,6 +1685,27 @@ window.removeSet = function(idx) {
 };
 
 
+// Template card click delegation
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('templatesBody').addEventListener('click', function(e) {
+    var card = e.target.closest('.tmpl-card');
+    if (card && card.dataset.id) { openTemplateDetail(card.dataset.id); return; }
+    var comCard = e.target.closest('.com-tmpl-card');
+    if (comCard && comCard.dataset.id) { openCommunityTemplate(comCard.dataset.id); }
+  });
+});
+
+// Template card click delegation
+document.addEventListener('DOMContentLoaded', function() {
+  var tb = document.getElementById('templatesBody');
+  if (tb) tb.addEventListener('click', function(e) {
+    var card = e.target.closest('.tmpl-card');
+    if (card && card.dataset.id) { openTemplateDetail(card.dataset.id); return; }
+    var comCard = e.target.closest('.com-tmpl-card');
+    if (comCard && comCard.dataset.id) { openCommunityTemplate(comCard.dataset.id); }
+  });
+});
+
 // ── MACHINE PICKER ────────────────────────────────────────────────────────────
 const MACHINE_DATA = [
   {g:'🦾 Arms', items:['Cable Curl','Preacher Curl','Assisted Dip','Tricep Extension','Tricep Pressdown']},
@@ -1742,6 +1837,364 @@ document.addEventListener('DOMContentLoaded', function() {
   if (cSearch) cSearch.addEventListener('input', renderCardioPickerList);
 });
 
+
+// ── TEMPLATES ─────────────────────────────────────────────────────────────────
+let templates = {};           // { id: {name, desc, exercises, shared, createdBy} }
+let communityTemplates = [];  // from sharedTemplates collection
+let templateView = 'my';
+let activeTemplateId = null;
+let templateExercises = [];   // exercises being built in create flow
+let editTemplateId = null;
+
+async function loadTemplates() {
+  if (!currentUser) return;
+  const snap = await getDocs(collection(db, 'users', uid(), 'templates'));
+  templates = {};
+  snap.forEach(d => { templates[d.id] = d.data(); });
+}
+
+async function loadCommunityTemplates() {
+  try {
+    const snap = await getDocs(collection(db, 'sharedTemplates'));
+    communityTemplates = [];
+    snap.forEach(d => communityTemplates.push({ id: d.id, ...d.data() }));
+    communityTemplates.sort((a,b) => (b.usedCount||0)-(a.usedCount||0));
+  } catch(e) { communityTemplates = []; }
+}
+
+window.switchTemplateView = function(view) {
+  templateView = view;
+  document.getElementById('tmplTabMy').style.background  = view==='my' ? 'var(--gold)' : 'none';
+  document.getElementById('tmplTabMy').style.color       = view==='my' ? '#000' : 'var(--muted)';
+  document.getElementById('tmplTabMy').style.border      = view==='my' ? 'none' : '1px solid var(--border)';
+  document.getElementById('tmplTabCom').style.background = view==='community' ? 'var(--gold)' : 'none';
+  document.getElementById('tmplTabCom').style.color      = view==='community' ? '#000' : 'var(--muted)';
+  document.getElementById('tmplTabCom').style.border     = view==='community' ? 'none' : '1px solid var(--border)';
+  renderTemplates();
+};
+
+async function renderTemplates() {
+  if (templateView === 'my') {
+    renderMyTemplates();
+  } else {
+    await loadCommunityTemplates();
+    renderCommunityTemplates();
+  }
+}
+
+function renderMyTemplates() {
+  const body = document.getElementById('templatesBody');
+  const list = Object.entries(templates);
+  if (!list.length) {
+    body.innerHTML = '<div style="text-align:center;padding:60px 20px;color:var(--muted)"><div style="font-size:48px;margin-bottom:16px">&#128203;</div><div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px">No templates yet</div><div style="font-size:13px">Tap + to create your first workout template</div></div>';
+    return;
+  }
+  body.innerHTML = list.map(([id, t]) => {
+    const exCount = (t.exercises||[]).length;
+    const shared = t.shared ? '<span style="font-size:11px;color:var(--gold);margin-left:6px">&#127760; Shared</span>' : '';
+    return '<div class="day-card tmpl-card" style="cursor:pointer" data-id="' + id + '">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start">' +
+        '<div>' +
+          '<div style="font-size:16px;font-weight:700;color:var(--text)">' + t.name + shared + '</div>' +
+          (t.desc ? '<div style="font-size:12px;color:var(--muted);margin-top:2px">' + t.desc + '</div>' : '') +
+        '</div>' +
+        '<div style="font-size:12px;color:var(--gold);font-weight:600">' + exCount + ' exercise' + (exCount!==1?'s':'') + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function renderCommunityTemplates() {
+  const body = document.getElementById('templatesBody');
+  if (!communityTemplates.length) {
+    body.innerHTML = '<div style="text-align:center;padding:60px 20px;color:var(--muted)">No community templates yet.<br>Be the first to share one!</div>';
+    return;
+  }
+  body.innerHTML = communityTemplates.map(t => {
+    const exCount = (t.exercises||[]).length;
+    const hwp = t.isHWP ? '<span style="font-size:10px;background:var(--gold);color:#000;padding:2px 6px;border-radius:10px;font-weight:700;margin-left:6px">HWP</span>' : '';
+    return '<div class="day-card com-tmpl-card" style="cursor:pointer" data-id="' + t.id + '">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start">' +
+        '<div>' +
+          '<div style="font-size:16px;font-weight:700;color:var(--text)">' + t.name + hwp + '</div>' +
+          '<div style="font-size:12px;color:var(--muted);margin-top:2px">by ' + (t.createdBy||'Anonymous') + (t.desc ? ' · ' + t.desc : '') + '</div>' +
+        '</div>' +
+        '<div style="font-size:12px;color:var(--gold);font-weight:600">' + exCount + ' exercises</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+window.openCreateTemplate = function() {
+  editTemplateId = null;
+  templateExercises = [];
+  document.getElementById('templateName').value = '';
+  document.getElementById('templateDesc').value = '';
+  document.getElementById('createTemplateTitleLabel').textContent = 'New Template';
+  document.getElementById('saveTemplateBtn').textContent = 'Save Template';
+  renderTemplateExList();
+  document.getElementById('createTemplateOverlay').style.display = 'flex';
+};
+
+window.closeCreateTemplate = function() {
+  document.getElementById('createTemplateOverlay').style.display = 'none';
+};
+
+window.addTemplateExercise = function() {
+  openExPicker('lifting');
+  window._templatePickerMode = true;
+};
+
+function renderTemplateExList() {
+  const el = document.getElementById('templateExList');
+  if (!templateExercises.length) {
+    el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px">No exercises added yet</div>';
+    return;
+  }
+  el.innerHTML = templateExercises.map((e,i) => {
+    // ensure setData array matches sets count
+    if (!e.setData) e.setData = Array(e.sets).fill(null).map((_,s)=>({weight:0,reps:e.reps||10}));
+    while (e.setData.length < e.sets) e.setData.push({weight:0,reps:e.reps||10});
+    e.setData = e.setData.slice(0, e.sets);
+
+    var setRows = e.setData.map(function(sd, s) {
+      return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
+        '<span style="font-size:12px;color:var(--muted);width:42px;flex-shrink:0">Set ' + (s+1) + '</span>' +
+        '<input class="form-input" type="number" placeholder="lb" value="' + (sd.weight||'') + '" style="width:72px;flex:none;padding:7px;text-align:center" data-exidx="' + i + '" data-setidx="' + s + '" data-field="weight" onchange="handleTmplSetChange(this)" />' +
+        '<input class="form-input" type="number" placeholder="reps" value="' + (sd.reps||'') + '" style="flex:1;padding:7px;text-align:center" data-exidx="' + i + '" data-setidx="' + s + '" data-field="reps" onchange="handleTmplSetChange(this)" />' +
+        (s===0 ? '<button type="button" class="set-rep-all" onclick="fillAllTmplSets(' + i + ')" style="font-size:11px;padding:7px 8px">&#8594; All</button>' : '') +
+        '<button type="button" class="set-rep-remove" onclick="removeTmplSet(' + i + ',' + s + ')">&#8722;</button>' +
+      '</div>';
+    }).join('');
+
+    return '<div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">' +
+        '<div style="font-size:15px;font-weight:700;color:var(--gold);flex:1;margin-right:8px">' + e.name + '</div>' +
+        '<button onclick="removeTemplateEx(' + i + ')" style="background:none;border:1px solid var(--danger);border-radius:6px;color:var(--danger);font-size:12px;font-weight:700;cursor:pointer;padding:4px 10px;flex-shrink:0;touch-action:manipulation">Remove</button>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">' +
+        '<span style="font-size:12px;color:var(--muted)">Sets:</span>' +
+        '<input class="form-input" type="number" value="' + e.sets + '" min="1" max="10" style="width:60px;padding:7px;text-align:center" data-idx="' + i + '" data-field="sets" onchange="handleTemplateExChange(this)" />' +
+        '<span style="font-size:11px;color:var(--muted);margin-left:4px">Weight &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Reps</span>' +
+      '</div>' +
+      setRows +
+    '</div>';
+  }).join('');
+}
+
+window.removeTemplateEx = function(i) {
+  templateExercises.splice(i,1);
+  renderTemplateExList();
+};
+
+window.removeTmplSet = function(ei, si) {
+  if (templateExercises[ei].setData.length <= 1) return;
+  templateExercises[ei].setData.splice(si, 1);
+  templateExercises[ei].sets = templateExercises[ei].setData.length;
+  renderTemplateExList();
+};
+
+window.fillAllTmplSets = function(ei) {
+  var first = templateExercises[ei].setData[0];
+  templateExercises[ei].setData = templateExercises[ei].setData.map(function() {
+    return {weight: first.weight, reps: first.reps};
+  });
+  renderTemplateExList();
+};
+
+window.handleTmplSetChange = function(inp) {
+  var ei = parseInt(inp.dataset.exidx);
+  var si = parseInt(inp.dataset.setidx);
+  var field = inp.dataset.field;
+  if (!templateExercises[ei].setData[si]) return;
+  templateExercises[ei].setData[si][field] = parseFloat(inp.value)||0;
+};
+
+window.handleTemplateExChange = function(inp) {
+  var i = parseInt(inp.dataset.idx);
+  var newSets = parseInt(inp.value)||1;
+  var e = templateExercises[i];
+  var old = e.setData || [];
+  e.sets = newSets;
+  e.setData = Array(newSets).fill(null).map(function(_,s){ return old[s] || {weight:0,reps:e.reps||10}; });
+  renderTemplateExList();
+};
+
+window.saveTemplate = async function() {
+  const name = document.getElementById('templateName').value.trim();
+  if (!name) { alert('Please enter a template name.'); return; }
+  if (!templateExercises.length) { alert('Please add at least one exercise.'); return; }
+  const data = {
+    name,
+    desc: document.getElementById('templateDesc').value.trim(),
+    exercises: templateExercises,
+    createdBy: currentUser.displayName || 'Anonymous',
+    createdAt: Date.now(),
+    shared: false
+  };
+  try {
+    if (editTemplateId) {
+      await setDoc(doc(db, 'users', uid(), 'templates', editTemplateId), data);
+    } else {
+      await addDoc(collection(db, 'users', uid(), 'templates'), data);
+    }
+    await loadTemplates();
+    window.closeCreateTemplate();
+    renderMyTemplates();
+  } catch(e) { alert('Error saving template: ' + e.message); }
+};
+
+window.openTemplateDetail = function(id) {
+  activeTemplateId = id;
+  const t = templates[id];
+  document.getElementById('templateDetailTitle').textContent = t.name;
+  document.getElementById('templateShareBtn').textContent = t.shared ? '&#127760;' : '&#128275;';
+  document.getElementById('templateShareBtn').onclick = function() { toggleShareTemplate(id); };
+  const body = document.getElementById('templateDetailBody');
+  body.innerHTML = 
+    (t.desc ? '<div style="padding:12px 16px 0;font-size:13px;color:var(--muted)">' + t.desc + '</div>' : '') +
+    '<div style="padding:12px 16px">' +
+      (t.exercises||[]).map((e,i) =>
+        '<div class="day-card" style="padding:12px 14px;margin-bottom:8px">' +
+          '<div style="font-size:15px;font-weight:600;color:var(--text)">' + e.name + '</div>' +
+          '<div style="font-size:12px;color:var(--gold);margin-top:4px">' + e.sets + ' sets × ' + e.reps + ' reps</div>' +
+        '</div>'
+      ).join('') +
+    '</div>';
+  document.getElementById('templateDetailOverlay').style.display = 'flex';
+};
+
+window.closeTemplateDetail = function() {
+  document.getElementById('templateDetailOverlay').style.display = 'none';
+};
+
+window.deleteActiveTemplate = async function() {
+  if (!confirm('Delete this template?')) return;
+  await deleteDoc(doc(db, 'users', uid(), 'templates', activeTemplateId));
+  // Also remove from shared if it was shared
+  try { await deleteDoc(doc(db, 'sharedTemplates', activeTemplateId)); } catch(e){}
+  await loadTemplates();
+  window.closeTemplateDetail();
+  renderMyTemplates();
+};
+
+window.useTemplateToday = async function() {
+  const t = templates[activeTemplateId];
+  if (!t) return;
+  const key = activeDayKey || todayKey();
+  if (!workouts[key]) workouts[key] = [];
+  (t.exercises||[]).forEach(e => {
+    workouts[key].push({
+      name: e.name, type: e.type||'barbell', weight: e.weight||0,
+      sets: e.sets, reps: Array(e.sets).fill(e.reps),
+      notes: '', unit: 'lb', machineName: '', miscDesc: '',
+      ts: Date.now()
+    });
+  });
+  await saveWorkoutDay(key);
+  window.closeTemplateDetail();
+  activeDayKey = null;
+  switchTab('today');
+  renderToday();
+  alert(t.name + ' loaded into today!');
+};
+
+window.toggleShareTemplate = async function(id) {
+  const t = templates[id];
+  const nowShared = !t.shared;
+  t.shared = nowShared;
+  await setDoc(doc(db, 'users', uid(), 'templates', id), t);
+  if (nowShared) {
+    await setDoc(doc(db, 'sharedTemplates', id), {
+      ...t, uid: uid(), sharedAt: Date.now(), usedCount: 0
+    });
+  } else {
+    try { await deleteDoc(doc(db, 'sharedTemplates', id)); } catch(e){}
+  }
+  await loadTemplates();
+  alert(nowShared ? 'Template shared with the community!' : 'Template removed from community.');
+  window.closeTemplateDetail();
+  renderMyTemplates();
+};
+
+window.openCommunityTemplate = function(id) {
+  const t = communityTemplates.find(x => x.id === id);
+  if (!t) return;
+  activeTemplateId = id;
+  document.getElementById('templateDetailTitle').textContent = t.name;
+  document.getElementById('templateShareBtn').textContent = '&#128203;';
+  document.getElementById('templateShareBtn').onclick = function() { copyToMyTemplates(t); };
+  const body = document.getElementById('templateDetailBody');
+  body.innerHTML =
+    '<div style="padding:12px 16px 0;font-size:13px;color:var(--muted)">by ' + (t.createdBy||'Anonymous') + (t.desc ? ' · ' + t.desc : '') + '</div>' +
+    '<div style="padding:12px 16px">' +
+      (t.exercises||[]).map(e =>
+        '<div class="day-card" style="padding:12px 14px;margin-bottom:8px">' +
+          '<div style="font-size:15px;font-weight:600;color:var(--text)">' + e.name + '</div>' +
+          '<div style="font-size:12px;color:var(--gold);margin-top:4px">' + e.sets + ' sets × ' + e.reps + ' reps</div>' +
+        '</div>'
+      ).join('') +
+    '</div>';
+  document.getElementById('templateDetailOverlay').style.display = 'flex';
+};
+
+window.copyToMyTemplates = async function(t) {
+  const copy = { name: t.name, desc: t.desc||'', exercises: t.exercises||[], createdBy: currentUser.displayName||'Anonymous', createdAt: Date.now(), shared: false, copiedFrom: t.createdBy };
+  await addDoc(collection(db, 'users', uid(), 'templates'), copy);
+  await loadTemplates();
+  alert('Copied to My Templates!');
+  window.closeTemplateDetail();
+  switchTemplateView('my');
+};
+
+
+window.openTemplatePicker = function() {
+  const list = document.getElementById('templatePickerList');
+  const entries = Object.entries(templates);
+  if (!entries.length) {
+    list.innerHTML = '<div style="text-align:center;padding:60px 20px;color:var(--muted)">No templates yet.<br><br><span style="color:var(--gold);cursor:pointer" onclick="closeTemplatePicker();openCreateTemplate()">+ Create one now</span></div>';
+  } else {
+    list.innerHTML = entries.map(([id, t]) => {
+      const exCount = (t.exercises||[]).length;
+      return '<div class="day-card pick-tmpl-card" style="cursor:pointer;margin-bottom:10px" data-id="' + id + '">' +
+        '<div style="font-size:16px;font-weight:700;color:var(--text)">' + t.name + '</div>' +
+        (t.desc ? '<div style="font-size:12px;color:var(--muted);margin-top:2px">' + t.desc + '</div>' : '') +
+        '<div style="font-size:12px;color:var(--gold);margin-top:6px">' + exCount + ' exercise' + (exCount!==1?'s':'') + '</div>' +
+      '</div>';
+    }).join('');
+  }
+  document.getElementById('templatePickerOverlay').style.display = 'flex';
+};
+
+window.closeTemplatePicker = function() {
+  document.getElementById('templatePickerOverlay').style.display = 'none';
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+  var pl = document.getElementById('templatePickerList');
+  if (pl) pl.addEventListener('click', async function(e) {
+    var card = e.target.closest('.pick-tmpl-card');
+    if (!card || !card.dataset.id) return;
+    var id = card.dataset.id;
+    var t = templates[id];
+    if (!t) return;
+    var key = activeDayKey || todayKey();
+    if (!workouts[key]) workouts[key] = [];
+    (t.exercises||[]).forEach(function(ex) {
+      workouts[key].push({
+        name: ex.name, type: ex.type||'barbell', weight: ex.weight||0,
+        sets: ex.sets, reps: Array(ex.sets).fill(ex.reps||0),
+        notes: '', unit: 'lb', machineName: '', miscDesc: '', ts: Date.now()
+      });
+    });
+    await saveWorkoutDay(key);
+    window.closeTemplatePicker();
+    activeDayKey = null;
+    renderToday();
+    alert(t.name + ' loaded!');
+  });
+});
+
 </script>
 
 <!-- EXERCISE PICKER OVERLAY -->
@@ -1816,6 +2269,65 @@ document.addEventListener('DOMContentLoaded', function() {
     <input id="cardioPickerSearch" class="form-input" placeholder="Search activities..." autocomplete="off" style="width:100%" />
   </div>
   <div id="cardioPickerList" style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;"></div>
+</div>
+
+<!-- CREATE TEMPLATE OVERLAY -->
+<div class="overlay" id="createTemplateOverlay" style="display:none;align-items:flex-end;">
+  <div class="sheet" style="max-height:92vh;display:flex;flex-direction:column;">
+    <div class="sheet-handle"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-shrink:0">
+      <div class="sheet-title" id="createTemplateTitleLabel" style="margin-bottom:0">New Template</div>
+      <button onclick="closeCreateTemplate()" style="background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer">&#10005;</button>
+    </div>
+    <div style="overflow-y:auto;flex:1;">
+      <div class="form-group">
+        <label class="form-label">Template name</label>
+        <input class="form-input" id="templateName" placeholder="e.g. Push Day A" maxlength="60" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description (optional)</label>
+        <input class="form-input" id="templateDesc" placeholder="e.g. Chest, shoulders & triceps" maxlength="120" />
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <label class="form-label" style="margin-bottom:0">Exercises</label>
+        <button class="btn-gold" style="font-size:12px;padding:6px 14px" onclick="addTemplateExercise()">+ Add Exercise</button>
+      </div>
+      <div id="templateExList" style="margin-bottom:14px"></div>
+      <div style="display:flex;gap:8px;padding-bottom:20px">
+        <button class="btn-grey" style="flex:1" onclick="closeCreateTemplate()">Cancel</button>
+        <button class="btn-gold" style="flex:2" id="saveTemplateBtn" onclick="saveTemplate()">Save Template</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TEMPLATE DETAIL OVERLAY -->
+<div id="templateDetailOverlay" style="display:none;position:fixed;inset:0;background:var(--dark);z-index:500;flex-direction:column;">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0">
+    <button onclick="closeTemplateDetail()" style="background:none;border:none;color:var(--text);font-size:22px;cursor:pointer;padding:0;touch-action:manipulation;">&#8592;</button>
+    <div style="font-size:18px;font-weight:700;color:var(--text)" id="templateDetailTitle">Template</div>
+    <button id="templateShareBtn" style="background:none;border:none;font-size:20px;cursor:pointer;padding:6px;touch-action:manipulation;">&#127760;</button>
+  </div>
+  <div class="scroll-body" id="templateDetailBody"></div>
+  <div style="padding:12px 16px;display:flex;gap:10px;border-top:1px solid var(--border);flex-shrink:0">
+    <button class="btn-grey" style="flex:1" onclick="deleteActiveTemplate()">Delete</button>
+    <button class="btn-gold" style="flex:2" onclick="useTemplateToday()">Use Today</button>
+  </div>
+</div>
+
+<!-- ADD TEMPLATE EXERCISE PICKER (reuses exercise picker) -->
+
+<!-- TEMPLATE PICKER (from FAB) -->
+<div id="templatePickerOverlay" style="display:none;position:fixed;inset:0;background:var(--dark);z-index:500;flex-direction:column;">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0">
+    <button onclick="closeTemplatePicker()" style="background:none;border:none;color:var(--text);font-size:22px;cursor:pointer;padding:0;touch-action:manipulation;">&#8592;</button>
+    <div style="font-size:18px;font-weight:700;color:var(--text)">Pick a Template</div>
+    <div style="width:32px"></div>
+  </div>
+  <div style="padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0">
+    <button class="btn-gold" style="width:100%;padding:12px;font-size:14px" onclick="closeTemplatePicker();openCreateTemplate()">+ Create New Template</button>
+  </div>
+  <div id="templatePickerList" style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 16px;"></div>
 </div>
 </body>
 </html>
