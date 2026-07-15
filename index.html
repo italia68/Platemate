@@ -1952,17 +1952,16 @@ function renderTemplateExList() {
     return;
   }
   el.innerHTML = templateExercises.map((e,i) => {
-    // ensure setData array matches sets count
     if (!e.setData) e.setData = Array(e.sets).fill(null).map((_,s)=>({weight:0,reps:e.reps||10}));
     while (e.setData.length < e.sets) e.setData.push({weight:0,reps:e.reps||10});
     e.setData = e.setData.slice(0, e.sets);
 
     var setRows = e.setData.map(function(sd, s) {
-      return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
-        '<span style="font-size:12px;color:var(--muted);width:42px;flex-shrink:0">Set ' + (s+1) + '</span>' +
-        '<input class="form-input" type="number" placeholder="lb" value="' + (sd.weight||'') + '" style="width:72px;flex:none;padding:7px;text-align:center" data-exidx="' + i + '" data-setidx="' + s + '" data-field="weight" onchange="handleTmplSetChange(this)" />' +
-        '<input class="form-input" type="number" placeholder="reps" value="' + (sd.reps||'') + '" style="flex:1;padding:7px;text-align:center" data-exidx="' + i + '" data-setidx="' + s + '" data-field="reps" onchange="handleTmplSetChange(this)" />' +
-        (s===0 ? '<button type="button" class="set-rep-all" onclick="fillAllTmplSets(' + i + ')" style="font-size:11px;padding:7px 8px">&#8594; All</button>' : '') +
+      return '<div class="set-rep-row">' +
+        '<span class="set-rep-label">Set ' + (s+1) + '</span>' +
+        '<input class="form-input set-wt-input" type="number" placeholder="lb" value="' + (sd.weight||'') + '" style="width:68px;flex:none" data-exidx="' + i + '" data-setidx="' + s + '" data-field="weight" onchange="handleTmplSetChange(this)" />' +
+        '<input class="form-input set-rep-input" type="number" placeholder="reps" value="' + (sd.reps||'') + '" data-exidx="' + i + '" data-setidx="' + s + '" data-field="reps" onchange="handleTmplSetChange(this)" />' +
+        (s===0 ? '<button type="button" class="set-rep-all" onclick="fillAllTmplSets(' + i + ')">&#8594; All</button>' : '') +
         '<button type="button" class="set-rep-remove" onclick="removeTmplSet(' + i + ',' + s + ')">&#8722;</button>' +
       '</div>';
     }).join('');
@@ -1972,11 +1971,11 @@ function renderTemplateExList() {
         '<div style="font-size:15px;font-weight:700;color:var(--gold);flex:1;margin-right:8px">' + e.name + '</div>' +
         '<button onclick="removeTemplateEx(' + i + ')" style="background:none;border:1px solid var(--danger);border-radius:6px;color:var(--danger);font-size:12px;font-weight:700;cursor:pointer;padding:4px 10px;flex-shrink:0;touch-action:manipulation">Remove</button>' +
       '</div>' +
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
         '<span style="font-size:12px;color:var(--muted)">Sets:</span>' +
-        '<input class="form-input" type="number" value="' + e.sets + '" min="1" max="10" style="width:60px;padding:7px;text-align:center" data-idx="' + i + '" data-field="sets" onchange="handleTemplateExChange(this)" />' +
-        '<span style="font-size:11px;color:var(--muted);margin-left:4px">Weight &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Reps</span>' +
+        '<input class="form-input" type="number" value="' + e.sets + '" min="1" max="10" style="width:60px;padding:8px;text-align:center" data-idx="' + i + '" data-field="sets" onchange="handleTemplateExChange(this)" />' +
       '</div>' +
+      '<div style="display:flex;gap:8px;padding:0 0 6px 52px"><span style="font-size:11px;color:var(--muted);width:68px">Weight</span><span style="font-size:11px;color:var(--muted)">Reps</span></div>' +
       setRows +
     '</div>';
   }).join('');
@@ -2066,6 +2065,28 @@ window.openTemplateDetail = function(id) {
 
 window.closeTemplateDetail = function() {
   document.getElementById('templateDetailOverlay').style.display = 'none';
+};
+
+window.editActiveTemplate = function() {
+  const t = templates[activeTemplateId];
+  if (!t) return;
+  editTemplateId = activeTemplateId;
+  templateExercises = JSON.parse(JSON.stringify(t.exercises || []));
+  // ensure setData exists on each exercise
+  templateExercises.forEach(function(e) {
+    if (!e.setData) e.setData = Array(e.sets).fill(null).map(function(_,i) {
+      var r = Array.isArray(e.reps) ? e.reps[i] : e.reps;
+      var w = Array.isArray(e.setWeights) ? e.setWeights[i] : e.weight||0;
+      return { weight: w||0, reps: r||10 };
+    });
+  });
+  document.getElementById('templateName').value = t.name || '';
+  document.getElementById('templateDesc').value  = t.desc  || '';
+  document.getElementById('createTemplateTitleLabel').textContent = 'Edit Template';
+  document.getElementById('saveTemplateBtn').textContent = 'Save Changes';
+  renderTemplateExList();
+  window.closeTemplateDetail();
+  document.getElementById('createTemplateOverlay').style.display = 'flex';
 };
 
 window.deleteActiveTemplate = async function() {
@@ -2311,6 +2332,7 @@ document.addEventListener('DOMContentLoaded', function() {
   <div class="scroll-body" id="templateDetailBody"></div>
   <div style="padding:12px 16px;display:flex;gap:10px;border-top:1px solid var(--border);flex-shrink:0">
     <button class="btn-grey" style="flex:1" onclick="deleteActiveTemplate()">Delete</button>
+    <button class="btn-grey" style="flex:1" onclick="editActiveTemplate()">Edit</button>
     <button class="btn-gold" style="flex:2" onclick="useTemplateToday()">Use Today</button>
   </div>
 </div>
