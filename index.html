@@ -1051,6 +1051,21 @@ window.saveExercise = async function() {
   else if (exType==='machine'){weight=parseFloat(document.getElementById('machWeight').value)||0;machineName=document.getElementById('machineName').value.trim();}
   else {weight=parseFloat(document.getElementById('miscWeight').value)||0;miscDesc=document.getElementById('miscDesc').value.trim();}
   const entry={name,type:exType,weight,sets,reps,notes,unit,machineName,miscDesc};
+  if (templateExMode) {
+    var setData = repsArr.map(function(r,i){ return { reps: r, weight: wtsArr[i]||weight||0 }; });
+    var tEntry = { name, type:exType, weight, sets, reps: repsArr, setData, notes, unit, machineName, miscDesc };
+    if (editTemplateExIdx !== null) {
+      templateExercises[editTemplateExIdx] = tEntry;
+    } else {
+      templateExercises.push(tEntry);
+    }
+    templateExMode = false;
+    editTemplateExIdx = null;
+    window.closeSheet();
+    renderTemplateExList();
+    document.getElementById('createTemplateOverlay').style.display = 'flex';
+    return;
+  }
   if (editDayKey!==null&&editIdx!==null){
     entry.ts=workouts[editDayKey][editIdx].ts;
     workouts[editDayKey][editIdx]=entry;
@@ -1845,6 +1860,8 @@ let templateView = 'my';
 let activeTemplateId = null;
 let templateExercises = [];   // exercises being built in create flow
 let editTemplateId = null;
+let templateExMode = false;
+let editTemplateExIdx = null;
 
 async function loadTemplates() {
   if (!currentUser) return;
@@ -1941,8 +1958,46 @@ window.closeCreateTemplate = function() {
 };
 
 window.addTemplateExercise = function() {
-  openExPicker('lifting');
-  window._templatePickerMode = true;
+  document.getElementById('createTemplateOverlay').style.display = 'none';
+  templateExMode = true;
+  editTemplateExIdx = null;
+  editDayKey = null; editIdx = null;
+  resetSheetFields();
+  document.getElementById('exSets').value = 4;
+  buildSetReps();
+  document.getElementById('sheetTitle').textContent = 'Add Exercise to Template';
+  document.getElementById('saveBtn').textContent = 'Save Exercise';
+  document.getElementById('addOverlay').style.display = 'flex';
+};
+
+window.editTemplateExercise = function(idx) {
+  const ex = templateExercises[idx];
+  document.getElementById('createTemplateOverlay').style.display = 'none';
+  templateExMode = true;
+  editTemplateExIdx = idx;
+  editDayKey = null; editIdx = null;
+  resetSheetFields();
+  document.getElementById('sheetTitle').textContent = 'Edit Template Exercise';
+  document.getElementById('saveBtn').textContent = 'Update Exercise';
+  document.getElementById('exName').value = ex.name;
+  document.getElementById('exNameDisplayText').textContent = ex.name;
+  document.getElementById('exNameDisplay').style.color = 'var(--text)';
+  document.getElementById('exSets').value = ex.sets;
+  buildSetReps();
+  var repsArr = (ex.setData||[]).map(function(s){return s.reps;});
+  var wtsArr  = (ex.setData||[]).map(function(s){return s.weight;});
+  for (var i=0;i<ex.sets;i++){
+    var rInp=document.getElementById('setRep_'+i); if(rInp) rInp.value=repsArr[i]||'';
+    var wInp=document.getElementById('setWt_'+i);  if(wInp) wInp.value=wtsArr[i]||'';
+  }
+  document.getElementById('exNotes').value = ex.notes || '';
+  document.getElementById('exUnit').value  = ex.unit || 'lb';
+  setType(ex.type || 'barbell');
+  if (ex.type==='barbell') { bbPlates={45:0,35:0,25:0,10:0,5:0,2.5:0}; renderBb(); document.getElementById('bbTotal').textContent=ex.weight||45; }
+  if (ex.type==='dumbbell') { document.getElementById('dbWeight').value = ex.weight||''; }
+  else if (ex.type==='machine')  { setMachineDisplay(ex.machineName||''); document.getElementById('machWeight').value=ex.weight||''; }
+  else if (ex.type==='misc') { document.getElementById('miscDesc').value=ex.miscDesc||''; document.getElementById('miscWeight').value=ex.weight||''; }
+  document.getElementById('addOverlay').style.display = 'flex';
 };
 
 function renderTemplateExList() {
@@ -1952,34 +2007,32 @@ function renderTemplateExList() {
     return;
   }
   el.innerHTML = templateExercises.map((e,i) => {
-    if (!e.setData) e.setData = Array(e.sets).fill(null).map((_,s)=>({weight:0,reps:e.reps||10}));
-    while (e.setData.length < e.sets) e.setData.push({weight:0,reps:e.reps||10});
-    e.setData = e.setData.slice(0, e.sets);
-
-    var setRows = e.setData.map(function(sd, s) {
-      return '<div class="set-rep-row">' +
-        '<span class="set-rep-label">Set ' + (s+1) + '</span>' +
-        '<input class="form-input set-wt-input" type="number" placeholder="lb" value="' + (sd.weight||'') + '" style="width:68px;flex:none" data-exidx="' + i + '" data-setidx="' + s + '" data-field="weight" onchange="handleTmplSetChange(this)" />' +
-        '<input class="form-input set-rep-input" type="number" placeholder="reps" value="' + (sd.reps||'') + '" data-exidx="' + i + '" data-setidx="' + s + '" data-field="reps" onchange="handleTmplSetChange(this)" />' +
-        (s===0 ? '<button type="button" class="set-rep-all" onclick="fillAllTmplSets(' + i + ')">&#8594; All</button>' : '') +
-        '<button type="button" class="set-rep-remove" onclick="removeTmplSet(' + i + ',' + s + ')">&#8722;</button>' +
-      '</div>';
-    }).join('');
-
-    return '<div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px">' +
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">' +
-        '<div style="font-size:15px;font-weight:700;color:var(--gold);flex:1;margin-right:8px">' + e.name + '</div>' +
-        '<button onclick="removeTemplateEx(' + i + ')" style="background:none;border:1px solid var(--danger);border-radius:6px;color:var(--danger);font-size:12px;font-weight:700;cursor:pointer;padding:4px 10px;flex-shrink:0;touch-action:manipulation">Remove</button>' +
+    const wLabel = e.type==='dumbbell' ? (e.weight||0)+' lb each' : (e.weight ? e.weight+' lb' : 'Bodyweight');
+    const sub = e.machineName ? ' &mdash; ' + e.machineName : e.miscDesc ? ' &mdash; ' + e.miscDesc : '';
+    const setsSummary = (e.setData||[]).map(function(s,idx){ return 'Set '+(idx+1)+': '+(s.weight?s.weight+' lb — ':'')+(s.reps||'—')+' reps'; }).join(' &nbsp;|&nbsp; ');
+    return '<div class="ex-card tmpl-ex-card" data-idx="' + i + '" style="cursor:pointer;margin-bottom:10px">' +
+      '<div class="ex-header">' +
+        '<div><div class="ex-name">' + e.name + sub + '</div><span class="ex-type">' + e.type + '</span></div>' +
+        '<div class="ex-actions"><button class="delete-btn" onclick="event.stopPropagation();removeTemplateEx(' + i + ')">&#215;</button></div>' +
       '</div>' +
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
-        '<span style="font-size:12px;color:var(--muted)">Sets:</span>' +
-        '<input class="form-input" type="number" value="' + e.sets + '" min="1" max="10" style="width:60px;padding:8px;text-align:center" data-idx="' + i + '" data-field="sets" onchange="handleTemplateExChange(this)" />' +
+      '<div class="ex-stats">' +
+        '<div class="ex-stat"><span class="ex-stat-label">Weight</span><span class="ex-stat-val">' + wLabel + '</span></div>' +
+        '<div class="ex-stat"><span class="ex-stat-label">Sets</span><span class="ex-stat-val">' + e.sets + '</span></div>' +
       '</div>' +
-      '<div style="display:flex;gap:8px;padding:0 0 6px 52px"><span style="font-size:11px;color:var(--muted);width:68px">Weight</span><span style="font-size:11px;color:var(--muted)">Reps</span></div>' +
-      setRows +
+      '<div style="font-size:12px;color:var(--muted);padding:0 14px 12px">' + setsSummary + '</div>' +
     '</div>';
   }).join('');
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  var tel = document.getElementById('templateExList');
+  if (tel) tel.addEventListener('click', function(e) {
+    var card = e.target.closest('.tmpl-ex-card');
+    if (card && card.dataset.idx !== undefined && !e.target.closest('.delete-btn')) {
+      editTemplateExercise(parseInt(card.dataset.idx));
+    }
+  });
+});
 
 window.removeTemplateEx = function(i) {
   templateExercises.splice(i,1);
