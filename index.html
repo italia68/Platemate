@@ -2158,10 +2158,16 @@ window.useTemplateToday = async function() {
   const key = activeDayKey || todayKey();
   if (!workouts[key]) workouts[key] = [];
   (t.exercises||[]).forEach(e => {
+    const repsArr = (e.setData||[]).map(s => s.reps||0);
+    const wtsArr  = (e.setData||[]).map(s => s.weight||0);
     workouts[key].push({
-      name: e.name, type: e.type||'barbell', weight: e.weight||0,
-      sets: e.sets, reps: Array(e.sets).fill(e.reps),
-      notes: '', unit: 'lb', machineName: '', miscDesc: '',
+      name: e.name, type: e.type||'barbell',
+      weight: wtsArr[0] || e.weight || 0,
+      sets: e.sets,
+      reps: repsArr.length ? repsArr : Array(e.sets).fill(0),
+      setWeights: wtsArr.some(w=>w) ? wtsArr : null,
+      notes: e.notes||'', unit: e.unit||'lb',
+      machineName: e.machineName||'', miscDesc: e.miscDesc||'',
       ts: Date.now()
     });
   });
@@ -2170,7 +2176,7 @@ window.useTemplateToday = async function() {
   activeDayKey = null;
   switchTab('today');
   renderToday();
-  alert(t.name + ' loaded into today!');
+  showToast('&#10003; ' + t.name + ' loaded into Today');
 };
 
 window.toggleShareTemplate = async function(id) {
@@ -2255,19 +2261,39 @@ document.addEventListener('DOMContentLoaded', function() {
     var key = activeDayKey || todayKey();
     if (!workouts[key]) workouts[key] = [];
     (t.exercises||[]).forEach(function(ex) {
+      var repsArr = (ex.setData||[]).map(function(s){return s.reps||0;});
+      var wtsArr  = (ex.setData||[]).map(function(s){return s.weight||0;});
       workouts[key].push({
-        name: ex.name, type: ex.type||'barbell', weight: ex.weight||0,
-        sets: ex.sets, reps: Array(ex.sets).fill(ex.reps||0),
-        notes: '', unit: 'lb', machineName: '', miscDesc: '', ts: Date.now()
+        name: ex.name, type: ex.type||'barbell',
+        weight: wtsArr[0] || ex.weight || 0,
+        sets: ex.sets,
+        reps: repsArr.length ? repsArr : Array(ex.sets).fill(0),
+        setWeights: wtsArr.some(function(w){return w;}) ? wtsArr : null,
+        notes: ex.notes||'', unit: ex.unit||'lb',
+        machineName: ex.machineName||'', miscDesc: ex.miscDesc||'', ts: Date.now()
       });
     });
     await saveWorkoutDay(key);
     window.closeTemplatePicker();
     activeDayKey = null;
     renderToday();
-    alert(t.name + ' loaded!');
+    showToast('&#10003; ' + t.name + ' loaded into Today');
   });
 });
+
+
+function showToast(msg) {
+  var el = document.getElementById('toastNotif');
+  document.getElementById('toastText').innerHTML = msg;
+  el.style.display = 'block';
+  el.style.opacity = '1';
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function() {
+    el.style.transition = 'opacity 0.3s';
+    el.style.opacity = '0';
+    setTimeout(function(){ el.style.display='none'; el.style.transition=''; }, 300);
+  }, 2200);
+}
 
 </script>
 
@@ -2403,6 +2429,11 @@ document.addEventListener('DOMContentLoaded', function() {
     <button class="btn-gold" style="width:100%;padding:12px;font-size:14px" onclick="closeTemplatePicker();openCreateTemplate()">+ Create New Template</button>
   </div>
   <div id="templatePickerList" style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 16px;"></div>
+</div>
+
+<!-- TOAST NOTIFICATION -->
+<div id="toastNotif" style="display:none;position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--gold);color:#000;padding:14px 22px;border-radius:30px;font-size:14px;font-weight:700;z-index:900;box-shadow:0 4px 16px rgba(0,0,0,0.4);white-space:nowrap;">
+  <span id="toastText"></span>
 </div>
 </body>
 </html>
