@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Platemate Admin</title>
+<style>
+  :root {
+    --gold: #FFB612;
+    --gold-dim: #cc9200;
+    --black: #0a0a0a;
+    --card: #161616;
+    --border: #2a2a2a;
+    --muted: #888;
+    --white: #f0f0f0;
+    --red: #e74c3c;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--black); color: var(--white);
+    font-family: -apple-system, 'Inter', sans-serif;
+    font-size: 15px; line-height: 1.6; min-height: 100vh;
+  }
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo { font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+  .logo span { color: var(--gold); }
+  #signOutBtn {
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    padding: 8px 16px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;
+    cursor: pointer; border-radius: 4px; display: none;
+  }
+  #signOutBtn:hover { border-color: var(--gold); color: var(--gold); }
+
+  main { max-width: 1000px; margin: 0 auto; padding: 40px 24px; }
+
+  /* LOGIN */
+  #loginScreen { max-width: 360px; margin: 80px auto 0; text-align: center; }
+  #loginScreen h1 { font-size: 22px; margin-bottom: 8px; }
+  #loginScreen p { color: var(--muted); font-size: 13px; margin-bottom: 28px; }
+  .field { margin-bottom: 14px; text-align: left; }
+  .field label { font-size: 12px; color: var(--muted); display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .field input {
+    width: 100%; background: var(--card); border: 1px solid var(--border);
+    color: var(--white); padding: 12px 14px; border-radius: 4px; font-size: 14px;
+  }
+  .field input:focus { outline: none; border-color: var(--gold); }
+  #loginBtn {
+    width: 100%; background: var(--gold); color: #000; border: none;
+    padding: 13px; font-weight: 700; font-size: 13px; text-transform: uppercase;
+    letter-spacing: 0.5px; border-radius: 4px; cursor: pointer; margin-top: 6px;
+  }
+  #loginBtn:hover { background: var(--gold-dim); }
+  #loginBtn:disabled { opacity: 0.6; cursor: default; }
+  #loginError { color: var(--red); font-size: 13px; margin-top: 14px; min-height: 18px; }
+
+  /* DASHBOARD */
+  #dashboard { display: none; }
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 2px; background: var(--border); margin-bottom: 40px;
+  }
+  .stat-card { background: var(--card); padding: 22px 20px; }
+  .stat-num { font-size: 32px; font-weight: 700; color: var(--gold); line-height: 1; }
+  .stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 8px; }
+
+  h2.section-title {
+    font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted);
+    margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;
+  }
+  #searchBox {
+    background: var(--card); border: 1px solid var(--border); color: var(--white);
+    padding: 8px 12px; border-radius: 4px; font-size: 13px; width: 220px;
+  }
+  #searchBox:focus { outline: none; border-color: var(--gold); }
+
+  table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+  th {
+    text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--border);
+  }
+  td { padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 13px; }
+  tr:hover td { background: var(--card); }
+  .name-cell { font-weight: 600; }
+  .muted { color: var(--muted); }
+  .empty-state { color: var(--muted); font-size: 13px; padding: 24px; text-align: center; }
+
+  #loadingMsg, #unauthorizedMsg { text-align: center; color: var(--muted); margin-top: 100px; font-size: 14px; }
+  #unauthorizedMsg { display: none; color: var(--red); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">PLATEMATE <span>ADMIN</span></div>
+  <button id="signOutBtn">Sign Out</button>
+</header>
+
+<main>
+
+  <div id="loadingMsg">Loading…</div>
+  <div id="unauthorizedMsg">This account isn't authorized to view the admin dashboard.</div>
+
+  <div id="loginScreen" style="display:none;">
+    <h1>Admin Sign In</h1>
+    <p>Use your Platemate account. Access is restricted to authorized admins.</p>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="loginEmail" autocomplete="username" />
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="loginPassword" autocomplete="current-password" />
+    </div>
+    <button id="loginBtn">Sign In</button>
+    <div id="loginError"></div>
+  </div>
+
+  <div id="dashboard">
+    <div class="stat-grid" id="statGrid"></div>
+
+    <h2 class="section-title">
+      <span>Users</span>
+      <input type="text" id="searchBox" placeholder="Search by name or email…" />
+    </h2>
+    <table id="userTable">
+      <thead>
+        <tr><th>Name</th><th>Email</th><th>Signed Up</th><th>Last Login</th></tr>
+      </thead>
+      <tbody id="userTableBody"></tbody>
+    </table>
+    <div class="empty-state" id="emptyState" style="display:none;">No users found.</div>
+  </div>
+
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, collection, getDocs, collectionGroup } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBBGigDjyeo55wJQWvJkt4W-c_1cbfVsQU",
+  authDomain: "platemate-f76cc.firebaseapp.com",
+  projectId: "platemate-f76cc",
+  storageBucket: "platemate-f76cc.firebasestorage.app",
+  messagingSenderId: "883328545046",
+  appId: "1:883328545046:web:c6403814ac32fc80e32037",
+  measurementId: "G-WJKF1J3WT7"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+let allUsers = [];
+
+const loadingMsg   = document.getElementById('loadingMsg');
+const unauthMsg     = document.getElementById('unauthorizedMsg');
+const loginScreen  = document.getElementById('loginScreen');
+const dashboard    = document.getElementById('dashboard');
+const signOutBtn   = document.getElementById('signOutBtn');
+
+onAuthStateChanged(auth, async (user) => {
+  loadingMsg.style.display = 'none';
+  unauthMsg.style.display = 'none';
+
+  if (!user) {
+    loginScreen.style.display = 'block';
+    dashboard.style.display = 'none';
+    signOutBtn.style.display = 'none';
+    return;
+  }
+
+  // Check admin allowlist: a doc must exist at /admins/{uid}
+  let isAdmin = false;
+  try {
+    const adminSnap = await getDoc(doc(db, 'admins', user.uid));
+    isAdmin = adminSnap.exists();
+  } catch (e) {
+    console.error('Admin check failed', e);
+  }
+
+  if (!isAdmin) {
+    unauthMsg.style.display = 'block';
+    loginScreen.style.display = 'none';
+    dashboard.style.display = 'none';
+    signOutBtn.style.display = 'inline-block';
+    return;
+  }
+
+  loginScreen.style.display = 'none';
+  dashboard.style.display = 'block';
+  signOutBtn.style.display = 'inline-block';
+  loadDashboard();
+});
+
+document.getElementById('loginBtn').onclick = async () => {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const btn = document.getElementById('loginBtn');
+  const errEl = document.getElementById('loginError');
+  errEl.textContent = '';
+  btn.disabled = true;
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (e) {
+    errEl.textContent = 'Incorrect email or password.';
+    btn.disabled = false;
+  }
+};
+
+signOutBtn.onclick = () => signOut(auth);
+
+function fmtDate(ts) {
+  if (!ts) return '—';
+  try {
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) +
+           ' ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  } catch (e) { return '—'; }
+}
+
+async function loadDashboard() {
+  const stats = {
+    users: 0, workouts: 0, cardio: 0, templates: 0, sharedTemplates: 0
+  };
+
+  // Users list
+  try {
+    const usersSnap = await getDocs(collection(db, 'users'));
+    allUsers = usersSnap.docs.map(d => ({ uid: d.id, ...d.data() }));
+    stats.users = allUsers.length;
+  } catch (e) {
+    console.error('Failed to load users — check Firestore rules for admin read access on /users', e);
+  }
+
+  // Aggregate counts across all users (requires collection group indexes — see setup notes)
+  try {
+    const wSnap = await getDocs(collectionGroup(db, 'workouts'));
+    stats.workouts = wSnap.size;
+  } catch (e) { console.error('workouts collectionGroup error (may need an index)', e); }
+
+  try {
+    const cSnap = await getDocs(collectionGroup(db, 'cardio'));
+    stats.cardio = cSnap.size;
+  } catch (e) { console.error('cardio collectionGroup error (may need an index)', e); }
+
+  try {
+    const tSnap = await getDocs(collectionGroup(db, 'templates'));
+    stats.templates = tSnap.size;
+  } catch (e) { console.error('templates collectionGroup error (may need an index)', e); }
+
+  try {
+    const stSnap = await getDocs(collection(db, 'sharedTemplates'));
+    stats.sharedTemplates = stSnap.size;
+  } catch (e) { console.error('sharedTemplates read error', e); }
+
+  renderStats(stats);
+  renderUserTable(allUsers);
+}
+
+function renderStats(stats) {
+  const grid = document.getElementById('statGrid');
+  const items = [
+    ['Total Users', stats.users],
+    ['Workout Days Logged', stats.workouts],
+    ['Cardio Sessions', stats.cardio],
+    ['Templates Created', stats.templates],
+    ['Public Templates', stats.sharedTemplates],
+  ];
+  grid.innerHTML = items.map(([label, num]) => `
+    <div class="stat-card">
+      <div class="stat-num">${num}</div>
+      <div class="stat-label">${label}</div>
+    </div>
+  `).join('');
+}
+
+function renderUserTable(users) {
+  const sorted = [...users].sort((a, b) => {
+    const aT = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+    const bT = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+    return bT - aT;
+  });
+  const tbody = document.getElementById('userTableBody');
+  const emptyState = document.getElementById('emptyState');
+
+  if (sorted.length === 0) {
+    tbody.innerHTML = '';
+    emptyState.style.display = 'block';
+    return;
+  }
+  emptyState.style.display = 'none';
+
+  tbody.innerHTML = sorted.map(u => `
+    <tr>
+      <td class="name-cell">${escapeHtml(u.displayName || '—')}</td>
+      <td>${escapeHtml(u.email || '—')}</td>
+      <td class="muted">${fmtDate(u.createdAt)}</td>
+      <td class="muted">${fmtDate(u.lastLogin)}</td>
+    </tr>
+  `).join('');
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+document.getElementById('searchBox').addEventListener('input', (e) => {
+  const q = e.target.value.trim().toLowerCase();
+  const filtered = allUsers.filter(u =>
+    (u.displayName || '').toLowerCase().includes(q) ||
+    (u.email || '').toLowerCase().includes(q)
+  );
+  renderUserTable(filtered);
+});
+</script>
+</body>
+</html>
