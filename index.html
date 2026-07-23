@@ -581,7 +581,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBBGigDjyeo55wJQWvJkt4W-c_1cbfVsQU",
@@ -619,6 +619,11 @@ const machWeights = [10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     currentUser = user;
+    setDoc(doc(db, 'users', user.uid), {
+      email: user.email,
+      displayName: user.displayName || '',
+      lastLogin: serverTimestamp()
+    }, { merge: true }).catch(e => console.error('lastLogin update error', e));
     await loadAllData();
     await loadTemplates();
     showMain();
@@ -734,6 +739,12 @@ window.doAuth = async function() {
       if (!name) { errEl.textContent = 'Please enter your name.'; btn.disabled=false; return; }
       const cred = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(cred.user, { displayName: name });
+      await setDoc(doc(db, 'users', cred.user.uid), {
+        email: email,
+        displayName: name,
+        createdAt: serverTimestamp(),
+        lastLogin: serverTimestamp()
+      }, { merge: true });
     } else {
       await signInWithEmailAndPassword(auth, email, password);
     }
