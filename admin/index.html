@@ -177,14 +177,22 @@ onAuthStateChanged(auth, async (user) => {
 
   // Check admin allowlist: a doc must exist at /admins/{uid}
   let isAdmin = false;
+  let debugInfo = '';
   try {
     const adminSnap = await getDoc(doc(db, 'admins', user.uid));
     isAdmin = adminSnap.exists();
   } catch (e) {
+    debugInfo = 'Error: ' + (e.code || e.message || e);
     console.error('Admin check failed', e);
   }
 
   if (!isAdmin) {
+    unauthMsg.innerHTML = "This account isn't authorized to view the admin dashboard." +
+      '<div style="margin-top:16px;font-size:12px;color:var(--muted);">' +
+      'Your UID: <code style="color:var(--gold);">' + user.uid + '</code><br>' +
+      (debugInfo ? 'Debug: <code style="color:var(--gold);">' + debugInfo + '</code><br>' : '') +
+      'Compare the UID above to the Document ID under Firestore &gt; admins &mdash; they must match exactly.' +
+      '</div>';
     unauthMsg.style.display = 'block';
     loginScreen.style.display = 'none';
     dashboard.style.display = 'none';
