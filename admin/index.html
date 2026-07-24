@@ -67,6 +67,11 @@
   .stat-num { font-size: 32px; font-weight: 700; color: var(--gold); line-height: 1; }
   .stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 8px; }
 
+  .debug-warnings {
+    background: #2a1f10; border: 1px solid var(--gold-dim); color: #f0d090;
+    padding: 14px 18px; font-size: 12px; border-radius: 4px; margin-bottom: 32px; line-height: 1.7;
+  }
+
   h2.section-title {
     font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted);
     margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;
@@ -121,6 +126,7 @@
 
   <div id="dashboard">
     <div class="stat-grid" id="statGrid"></div>
+    <div id="debugWarnings" class="debug-warnings" style="display:none;"></div>
 
     <h2 class="section-title">
       <span>Users</span>
@@ -237,12 +243,15 @@ async function loadDashboard() {
     users: 0, workouts: 0, cardio: 0, templates: 0, sharedTemplates: 0
   };
 
+  const warnings = [];
+
   // Users list
   try {
     const usersSnap = await getDocs(collection(db, 'users'));
     allUsers = usersSnap.docs.map(d => ({ uid: d.id, ...d.data() }));
     stats.users = allUsers.length;
   } catch (e) {
+    warnings.push('Users list: ' + (e.code || e.message));
     console.error('Failed to load users — check Firestore rules for admin read access on /users', e);
   }
 
@@ -250,26 +259,49 @@ async function loadDashboard() {
   try {
     const wSnap = await getDocs(collectionGroup(db, 'workouts'));
     stats.workouts = wSnap.size;
-  } catch (e) { console.error('workouts collectionGroup error (may need an index)', e); }
+  } catch (e) {
+    warnings.push('Workouts count: ' + (e.code || e.message));
+    console.error('workouts collectionGroup error (may need an index)', e);
+  }
 
   try {
     const cSnap = await getDocs(collectionGroup(db, 'cardio'));
     stats.cardio = cSnap.size;
-  } catch (e) { console.error('cardio collectionGroup error (may need an index)', e); }
+  } catch (e) {
+    warnings.push('Cardio count: ' + (e.code || e.message));
+    console.error('cardio collectionGroup error (may need an index)', e);
+  }
 
   try {
     const tSnap = await getDocs(collectionGroup(db, 'templates'));
     stats.templates = tSnap.size;
-  } catch (e) { console.error('templates collectionGroup error (may need an index)', e); }
+  } catch (e) {
+    warnings.push('Templates count: ' + (e.code || e.message));
+    console.error('templates collectionGroup error (may need an index)', e);
+  }
 
   try {
     const stSnap = await getDocs(collection(db, 'sharedTemplates'));
     stats.sharedTemplates = stSnap.size;
-  } catch (e) { console.error('sharedTemplates read error', e); }
+  } catch (e) {
+    warnings.push('Shared templates count: ' + (e.code || e.message));
+    console.error('sharedTemplates read error', e);
+  }
 
+  renderWarnings(warnings);
   renderStats(stats);
   renderUserTable(allUsers);
 }
+
+function renderWarnings(warnings) {
+  const el = document.getElementById('debugWarnings');
+  if (!el) return;
+  if (warnings.length === 0) { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  el.innerHTML = '<strong>Some stats failed to load:</strong><br>' +
+    warnings.map(w => '&bull; ' + w).join('<br>');
+}
+
 
 function renderStats(stats) {
   const grid = document.getElementById('statGrid');
