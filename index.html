@@ -2562,45 +2562,52 @@ const navTourSteps = [
 ];
 let navTourIdx = 0;
 
-function navTourPosition() {
+function navTourClearHighlight() {
+  navTourSteps.forEach(function(s) {
+    const el = document.getElementById(s.id);
+    if (el) {
+      el.style.position = '';
+      el.style.zIndex = '';
+      el.style.background = '';
+      el.style.borderRadius = '';
+      el.style.boxShadow = '';
+    }
+  });
+}
+
+function navTourShowStep() {
+  navTourClearHighlight();
   const step = navTourSteps[navTourIdx];
   const el = document.getElementById(step.id);
-  if (!el) { navTourNext(); return; }
-  const r = el.getBoundingClientRect();
-  const pad = 6;
-  const hi = document.getElementById('navTourHighlight');
-  hi.style.top = (r.top - pad) + 'px';
-  hi.style.left = (r.left - pad) + 'px';
-  hi.style.width = (r.width + pad*2) + 'px';
-  hi.style.height = (r.height + pad*2) + 'px';
-
+  if (el) {
+    el.style.position = 'relative';
+    el.style.zIndex = '801';
+    el.style.background = 'var(--card2)';
+    el.style.borderRadius = '10px';
+    el.style.boxShadow = '0 0 0 2px var(--gold)';
+  }
   document.getElementById('navTourTitle').textContent = step.title;
   document.getElementById('navTourDesc').textContent = step.desc;
   document.getElementById('navTourNextBtn').textContent = navTourIdx === navTourSteps.length - 1 ? 'Got it!' : 'Next';
-
-  const bubble = document.getElementById('navTourBubble');
-  const bw = 240;
-  let left = r.left + r.width/2 - bw/2;
-  left = Math.max(10, Math.min(left, window.innerWidth - bw - 10));
-  bubble.style.left = left + 'px';
-  bubble.style.top = (r.top - pad - 12 - bubble.offsetHeight) + 'px';
 }
 
 window.startNavTour = function() {
   navTourIdx = 0;
   document.getElementById('navTourOverlay').style.display = 'block';
-  navTourPosition();
-  setTimeout(navTourPosition, 20); // recalc once bubble has real height
+  document.getElementById('navTourBubble').style.display = 'block';
+  navTourShowStep();
 };
 
 window.navTourNext = function() {
   navTourIdx++;
   if (navTourIdx >= navTourSteps.length) { window.skipNavTour(); return; }
-  navTourPosition();
+  navTourShowStep();
 };
 
 window.skipNavTour = function() {
+  navTourClearHighlight();
   document.getElementById('navTourOverlay').style.display = 'none';
+  document.getElementById('navTourBubble').style.display = 'none';
   try { localStorage.setItem('pm_seen_nav_tour', '1'); } catch(e){}
 };
 
@@ -2765,15 +2772,13 @@ function showToast(msg) {
 </div>
 
 <!-- NAV TOUR OVERLAY -->
-<div id="navTourOverlay" style="display:none;position:fixed;inset:0;z-index:800;">
-  <div id="navTourHighlight" style="position:absolute;border-radius:14px;pointer-events:none;transition:top .25s ease,left .25s ease,width .25s ease,height .25s ease;box-shadow:0 0 0 9999px rgba(0,0,0,0.75);"></div>
-  <div id="navTourBubble" style="position:absolute;width:240px;background:var(--card2);border:1px solid var(--gold);border-radius:12px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.5);transition:top .25s ease,left .25s ease;">
-    <div id="navTourTitle" style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:4px"></div>
-    <div id="navTourDesc" style="font-size:13px;color:var(--text);line-height:1.4;margin-bottom:12px"></div>
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <button onclick="skipNavTour()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;padding:6px 0;touch-action:manipulation">Skip</button>
-      <button onclick="navTourNext()" class="btn-gold" id="navTourNextBtn" style="font-size:12px;padding:8px 16px">Next</button>
-    </div>
+<div id="navTourOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:800;"></div>
+<div id="navTourBubble" style="display:none;position:fixed;bottom:78px;left:50%;transform:translateX(-50%);width:min(90vw,300px);background:var(--card2);border:1px solid var(--gold);border-radius:12px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.6);z-index:801;">
+  <div id="navTourTitle" style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:4px"></div>
+  <div id="navTourDesc" style="font-size:13px;color:var(--text);line-height:1.4;margin-bottom:12px"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <button onclick="skipNavTour()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;padding:6px 0;touch-action:manipulation">Skip</button>
+    <button onclick="navTourNext()" class="btn-gold" id="navTourNextBtn" style="font-size:12px;padding:8px 16px">Next</button>
   </div>
 </div>
 
