@@ -1269,7 +1269,7 @@ window.saveCardio = async function() {
   if(!type){alert('Please select an activity type.');return;}
   if(!mins&&!secs){alert('Please enter a duration.');return;}
   const entry={type,mins,secs,dist,dunit,cals,notes,ts:Date.now()};
-  const key=todayKey();
+  const key=activeDayKey||todayKey();
   if(editCardioKey!==null&&editCardioIdx!==null){
     entry.ts=cardioSessions[editCardioKey][editCardioIdx].ts;
     cardioSessions[editCardioKey][editCardioIdx]=entry;
@@ -1281,9 +1281,15 @@ window.saveCardio = async function() {
     if(!cardioSessions[key])cardioSessions[key]=[];
     cardioSessions[key].push(entry);
     await saveCardioDay(key);
+    activeDayKey=null;
     window.closeCardioSheet();
-    renderCardioToday();
-    renderToday();
+    if(key===todayKey()){
+      renderCardioToday();
+      renderToday();
+    } else {
+      renderHistory();
+      openDayDetail(key);
+    }
   }
 };
 
