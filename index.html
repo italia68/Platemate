@@ -1268,6 +1268,20 @@ window.saveCardio = async function() {
   const notes=document.getElementById('cardioNotes').value.trim();
   if(!type){alert('Please select an activity type.');return;}
   if(!mins&&!secs){alert('Please enter a duration.');return;}
+  if (templateCardioMode) {
+    const tEntry = {type,mins,secs,dist,dunit,cals,notes};
+    if (editTemplateCardioIdx !== null) {
+      templateCardio[editTemplateCardioIdx] = tEntry;
+    } else {
+      templateCardio.push(tEntry);
+    }
+    templateCardioMode = false;
+    editTemplateCardioIdx = null;
+    window.closeCardioSheet();
+    renderTemplateCardioList();
+    document.getElementById('createTemplateOverlay').style.display = 'flex';
+    return;
+  }
   const entry={type,mins,secs,dist,dunit,cals,notes,ts:Date.now()};
   const key=activeDayKey||todayKey();
   if(editCardioKey!==null&&editCardioIdx!==null){
@@ -1982,9 +1996,12 @@ let communityTemplates = [];  // from sharedTemplates collection
 let templateView = 'my';
 let activeTemplateId = null;
 let templateExercises = [];   // exercises being built in create flow
+let templateCardio = [];      // cardio sessions being built in create flow
 let editTemplateId = null;
 let templateExMode = false;
 let editTemplateExIdx = null;
+let templateCardioMode = false;
+let editTemplateCardioIdx = null;
 
 async function loadTemplates() {
   if (!currentUser) return;
@@ -2031,6 +2048,8 @@ function renderMyTemplates() {
   }
   body.innerHTML = list.map(([id, t]) => {
     const exCount = (t.exercises||[]).length;
+    const cCount = (t.cardio||[]).length;
+    const countLabel = exCount + ' exercise' + (exCount!==1?'s':'') + (cCount ? ' · ' + cCount + ' cardio' : '');
     const shared = t.shared ? '<span style="font-size:11px;color:var(--gold);margin-left:6px">&#127760; Shared</span>' : '';
     return '<div class="day-card tmpl-card" style="cursor:pointer" data-id="' + id + '">' +
       '<div style="display:flex;justify-content:space-between;align-items:flex-start">' +
@@ -2038,7 +2057,7 @@ function renderMyTemplates() {
           '<div style="font-size:16px;font-weight:700;color:var(--text)">' + t.name + shared + '</div>' +
           (t.desc ? '<div style="font-size:12px;color:var(--muted);margin-top:2px">' + t.desc + '</div>' : '') +
         '</div>' +
-        '<div style="font-size:12px;color:var(--gold);font-weight:600">' + exCount + ' exercise' + (exCount!==1?'s':'') + '</div>' +
+        '<div style="font-size:12px;color:var(--gold);font-weight:600">' + countLabel + '</div>' +
       '</div>' +
     '</div>';
   }).join('');
@@ -2052,6 +2071,8 @@ function renderCommunityTemplates() {
   }
   body.innerHTML = communityTemplates.map(t => {
     const exCount = (t.exercises||[]).length;
+    const cCount = (t.cardio||[]).length;
+    const countLabel = exCount + ' exercise' + (exCount!==1?'s':'') + (cCount ? ' · ' + cCount + ' cardio' : '');
     const hwp = t.isHWP ? '<span style="font-size:10px;background:var(--gold);color:#000;padding:2px 6px;border-radius:10px;font-weight:700;margin-left:6px">HWP</span>' : '';
     return '<div class="day-card com-tmpl-card" style="cursor:pointer" data-id="' + t.id + '">' +
       '<div style="display:flex;justify-content:space-between;align-items:flex-start">' +
@@ -2059,7 +2080,7 @@ function renderCommunityTemplates() {
           '<div style="font-size:16px;font-weight:700;color:var(--text)">' + t.name + hwp + '</div>' +
           '<div style="font-size:12px;color:var(--muted);margin-top:2px">by ' + (t.createdBy||'Anonymous') + (t.desc ? ' · ' + t.desc : '') + '</div>' +
         '</div>' +
-        '<div style="font-size:12px;color:var(--gold);font-weight:600">' + exCount + ' exercises</div>' +
+        '<div style="font-size:12px;color:var(--gold);font-weight:600">' + countLabel + '</div>' +
       '</div>' +
     '</div>';
   }).join('');
@@ -2068,11 +2089,13 @@ function renderCommunityTemplates() {
 window.openCreateTemplate = function() {
   editTemplateId = null;
   templateExercises = [];
+  templateCardio = [];
   document.getElementById('templateName').value = '';
   document.getElementById('templateDesc').value = '';
   document.getElementById('createTemplateTitleLabel').textContent = 'New Template';
   document.getElementById('saveTemplateBtn').textContent = 'Save Template';
   renderTemplateExList();
+  renderTemplateCardioList();
   document.getElementById('createTemplateOverlay').style.display = 'flex';
 };
 
@@ -2162,6 +2185,76 @@ window.removeTemplateEx = function(i) {
   renderTemplateExList();
 };
 
+window.addTemplateCardio = function() {
+  document.getElementById('createTemplateOverlay').style.display = 'none';
+  templateCardioMode = true;
+  editTemplateCardioIdx = null;
+  editCardioKey = null; editCardioIdx = null;
+  document.getElementById('cardioSheetTitle').textContent = 'Add Cardio to Template';
+  document.getElementById('cardioSaveBtn').textContent = 'Save Cardio';
+  ['cardioMins','cardioSecs','cardioDist','cardioCals','cardioNotes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('cardioType').value=''; setCardioTypeDisplay('');
+  document.getElementById('cardioDistUnit').value='mi';
+  document.getElementById('cardioOverlay').style.display='flex';
+};
+
+window.editTemplateCardio = function(idx) {
+  const s = templateCardio[idx];
+  document.getElementById('createTemplateOverlay').style.display = 'none';
+  templateCardioMode = true;
+  editTemplateCardioIdx = idx;
+  editCardioKey = null; editCardioIdx = null;
+  document.getElementById('cardioSheetTitle').textContent = 'Edit Template Cardio';
+  document.getElementById('cardioSaveBtn').textContent = 'Update Cardio';
+  setCardioTypeDisplay(s.type);
+  document.getElementById('cardioMins').value = s.mins||'';
+  document.getElementById('cardioSecs').value = s.secs||'';
+  document.getElementById('cardioDist').value = s.dist||'';
+  document.getElementById('cardioDistUnit').value = s.dunit||'mi';
+  document.getElementById('cardioCals').value = s.cals||'';
+  document.getElementById('cardioNotes').value = s.notes||'';
+  document.getElementById('cardioOverlay').style.display='flex';
+};
+
+function renderTemplateCardioList() {
+  const el = document.getElementById('templateCardioList');
+  if (!templateCardio.length) {
+    el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px">No cardio added yet</div>';
+    return;
+  }
+  el.innerHTML = templateCardio.map((s,i) => {
+    const dur = (s.mins||0)+'m'+(s.secs?' '+s.secs+'s':'');
+    const dist = s.dist ? s.dist+' '+s.dunit : '';
+    const cals = s.cals ? s.cals+' cal' : '';
+    return '<div class="ex-card tmpl-cardio-card" data-idx="' + i + '" style="cursor:pointer;margin-bottom:10px">' +
+      '<div class="ex-header">' +
+        '<div><div class="ex-name">' + s.type + '</div></div>' +
+        '<div class="ex-actions"><button class="delete-btn" onclick="event.stopPropagation();removeTemplateCardio(' + i + ')">&#215;</button></div>' +
+      '</div>' +
+      '<div class="ex-stats">' +
+        '<div class="ex-stat"><span class="ex-stat-label">Duration</span><span class="ex-stat-val">' + dur + '</span></div>' +
+        (dist ? '<div class="ex-stat"><span class="ex-stat-label">Distance</span><span class="ex-stat-val">' + dist + '</span></div>' : '') +
+        (cals ? '<div class="ex-stat"><span class="ex-stat-label">Calories</span><span class="ex-stat-val">' + cals + '</span></div>' : '') +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var tcl = document.getElementById('templateCardioList');
+  if (tcl) tcl.addEventListener('click', function(e) {
+    var card = e.target.closest('.tmpl-cardio-card');
+    if (card && card.dataset.idx !== undefined && !e.target.closest('.delete-btn')) {
+      editTemplateCardio(parseInt(card.dataset.idx));
+    }
+  });
+});
+
+window.removeTemplateCardio = function(i) {
+  templateCardio.splice(i,1);
+  renderTemplateCardioList();
+};
+
 window.removeTmplSet = function(ei, si) {
   if (templateExercises[ei].setData.length <= 1) return;
   templateExercises[ei].setData.splice(si, 1);
@@ -2198,11 +2291,12 @@ window.handleTemplateExChange = function(inp) {
 window.saveTemplate = async function() {
   const name = document.getElementById('templateName').value.trim();
   if (!name) { alert('Please enter a template name.'); return; }
-  if (!templateExercises.length) { alert('Please add at least one exercise.'); return; }
+  if (!templateExercises.length && !templateCardio.length) { alert('Please add at least one exercise or cardio session.'); return; }
   const data = {
     name,
     desc: document.getElementById('templateDesc').value.trim(),
     exercises: templateExercises,
+    cardio: templateCardio,
     createdBy: currentUser.displayName || 'Anonymous',
     createdAt: Date.now(),
     shared: false
@@ -2218,6 +2312,17 @@ window.saveTemplate = async function() {
     renderMyTemplates();
   } catch(e) { alert('Error saving template: ' + e.message); }
 };
+
+function tmplCardioRowsHTML(cardio) {
+  return (cardio||[]).map(function(s) {
+    const dur = (s.mins||0)+'m'+(s.secs?' '+s.secs+'s':'');
+    const dist = s.dist ? s.dist+' '+s.dunit : '';
+    return '<div class="day-card" style="padding:12px 14px;margin-bottom:8px">' +
+      '<div style="font-size:15px;font-weight:600;color:var(--text)">' + s.type + '</div>' +
+      '<div style="font-size:12px;color:var(--gold);margin-top:4px">' + dur + (dist ? ' · ' + dist : '') + '</div>' +
+    '</div>';
+  }).join('');
+}
 
 window.openTemplateDetail = function(id) {
   activeTemplateId = id;
@@ -2235,6 +2340,7 @@ window.openTemplateDetail = function(id) {
           '<div style="font-size:12px;color:var(--gold);margin-top:4px">' + e.sets + ' sets × ' + e.reps + ' reps</div>' +
         '</div>'
       ).join('') +
+      tmplCardioRowsHTML(t.cardio) +
     '</div>';
   document.getElementById('templateDetailOverlay').style.display = 'flex';
 };
@@ -2248,6 +2354,7 @@ window.editActiveTemplate = function() {
   if (!t) return;
   editTemplateId = activeTemplateId;
   templateExercises = JSON.parse(JSON.stringify(t.exercises || []));
+  templateCardio = JSON.parse(JSON.stringify(t.cardio || []));
   // ensure setData exists on each exercise
   templateExercises.forEach(function(e) {
     if (!e.setData) e.setData = Array(e.sets).fill(null).map(function(_,i) {
@@ -2261,6 +2368,7 @@ window.editActiveTemplate = function() {
   document.getElementById('createTemplateTitleLabel').textContent = 'Edit Template';
   document.getElementById('saveTemplateBtn').textContent = 'Save Changes';
   renderTemplateExList();
+  renderTemplateCardioList();
   window.closeTemplateDetail();
   document.getElementById('createTemplateOverlay').style.display = 'flex';
 };
@@ -2295,11 +2403,23 @@ window.useTemplateToday = async function() {
     });
   });
   await saveWorkoutDay(key);
+  if ((t.cardio||[]).length) {
+    if (!cardioSessions[key]) cardioSessions[key] = [];
+    t.cardio.forEach(s => {
+      cardioSessions[key].push({
+        type: s.type, mins: s.mins||0, secs: s.secs||0,
+        dist: s.dist||0, dunit: s.dunit||'mi', cals: s.cals||0,
+        notes: s.notes||'', ts: Date.now()
+      });
+    });
+    await saveCardioDay(key);
+  }
   window.closeTemplateDetail();
   if (key === todayKey()) {
     activeDayKey = null;
     switchTab('today');
     renderToday();
+    renderCardioToday();
     showToast('&#10003; ' + t.name + ' loaded into Today');
   } else {
     renderHistory();
@@ -2343,12 +2463,13 @@ window.openCommunityTemplate = function(id) {
           '<div style="font-size:12px;color:var(--gold);margin-top:4px">' + e.sets + ' sets × ' + e.reps + ' reps</div>' +
         '</div>'
       ).join('') +
+      tmplCardioRowsHTML(t.cardio) +
     '</div>';
   document.getElementById('templateDetailOverlay').style.display = 'flex';
 };
 
 window.copyToMyTemplates = async function(t) {
-  const copy = { name: t.name, desc: t.desc||'', exercises: t.exercises||[], createdBy: currentUser.displayName||'Anonymous', createdAt: Date.now(), shared: false, copiedFrom: t.createdBy };
+  const copy = { name: t.name, desc: t.desc||'', exercises: t.exercises||[], cardio: t.cardio||[], createdBy: currentUser.displayName||'Anonymous', createdAt: Date.now(), shared: false, copiedFrom: t.createdBy };
   await addDoc(collection(db, 'users', uid(), 'templates'), copy);
   await loadTemplates();
   alert('Copied to My Templates!');
@@ -2403,10 +2524,22 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
     await saveWorkoutDay(key);
+    if ((t.cardio||[]).length) {
+      if (!cardioSessions[key]) cardioSessions[key] = [];
+      t.cardio.forEach(function(s) {
+        cardioSessions[key].push({
+          type: s.type, mins: s.mins||0, secs: s.secs||0,
+          dist: s.dist||0, dunit: s.dunit||'mi', cals: s.cals||0,
+          notes: s.notes||'', ts: Date.now()
+        });
+      });
+      await saveCardioDay(key);
+    }
     window.closeTemplatePicker();
     if (key === todayKey()) {
       activeDayKey = null;
       renderToday();
+      renderCardioToday();
       showToast('&#10003; ' + t.name + ' loaded into Today');
     } else {
       renderHistory();
@@ -2528,6 +2661,11 @@ function showToast(msg) {
         <button class="btn-gold" style="font-size:12px;padding:6px 14px" onclick="addTemplateExercise()">+ Add Exercise</button>
       </div>
       <div id="templateExList" style="margin-bottom:14px"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <label class="form-label" style="margin-bottom:0">Cardio</label>
+        <button class="btn-gold" style="font-size:12px;padding:6px 14px" onclick="addTemplateCardio()">+ Add Cardio</button>
+      </div>
+      <div id="templateCardioList" style="margin-bottom:14px"></div>
       <div style="display:flex;gap:8px;padding-bottom:20px">
         <button class="btn-grey" style="flex:1" onclick="closeCreateTemplate()">Cancel</button>
         <button class="btn-gold" style="flex:2" id="saveTemplateBtn" onclick="saveTemplate()">Save Template</button>
