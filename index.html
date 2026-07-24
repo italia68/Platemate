@@ -334,7 +334,10 @@
   </div>
 
   <div id="tabHistory" style="display:none;flex-direction:column;flex:1;overflow:hidden">
-    <div class="topbar"><div class="topbar-title">History</div></div>
+    <div class="topbar" style="justify-content:space-between">
+      <div class="topbar-title">History</div>
+      <button onclick="openHistoryDatePick()" style="background:var(--gold);color:#000;border:none;border-radius:20px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;touch-action:manipulation">&#128197; Log Past Day</button>
+    </div>
     <div class="scroll-body" id="historyBody"></div>
   </div>
 
@@ -483,12 +486,37 @@
     <div style="display:flex;gap:8px;margin-bottom:14px">
       <button class="btn-gold" style="flex:1;font-size:13px;padding:10px" onclick="openSheetForDay()">+ Exercise</button>
       <button class="btn-grey" style="flex:1;font-size:13px;padding:10px" onclick="openCardioForDay()">+ Cardio</button>
+      <button class="btn-grey" style="flex:1;font-size:13px;padding:10px" onclick="openTemplateForDay()">+ Template</button>
     </div>
     <div id="dayBody"></div>
   </div>
 </div>
 
-<!-- CARDIO OVERLAY -->
+<!-- HISTORY DATE PICK OVERLAY -->
+  <div class="overlay" id="historyDatePickOverlay">
+    <div class="sheet" style="max-width:340px">
+      <div class="sheet-handle"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <button onclick="historyCalNav(-1)" style="background:var(--card2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;color:var(--gold);font-size:14px;cursor:pointer;touch-action:manipulation">&#8249;</button>
+        <div id="historyCalLabel" style="font-size:14px;font-weight:700;color:var(--gold)"></div>
+        <button onclick="historyCalNav(1)" style="background:var(--card2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;color:var(--gold);font-size:14px;cursor:pointer;touch-action:manipulation">&#8250;</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px">
+        <div style="text-align:center;font-size:10px;color:var(--muted);font-weight:600">S</div>
+        <div style="text-align:center;font-size:10px;color:var(--muted);font-weight:600">M</div>
+        <div style="text-align:center;font-size:10px;color:var(--muted);font-weight:600">T</div>
+        <div style="text-align:center;font-size:10px;color:var(--muted);font-weight:600">W</div>
+        <div style="text-align:center;font-size:10px;color:var(--muted);font-weight:600">T</div>
+        <div style="text-align:center;font-size:10px;color:var(--muted);font-weight:600">F</div>
+        <div style="text-align:center;font-size:10px;color:var(--muted);font-weight:600">S</div>
+      </div>
+      <div id="historyCalGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:10px"></div>
+      <div id="historyCalPreview"></div>
+      <button class="btn-grey" style="width:100%;margin-top:10px" onclick="closeHistoryDatePick()">Close</button>
+    </div>
+  </div>
+
+  <!-- CARDIO OVERLAY -->
 <div class="overlay" id="cardioOverlay">
   <div class="sheet">
     <div class="sheet-handle"></div>
@@ -965,6 +993,11 @@ window.openCardioForDay = function() {
   document.getElementById('cardioOverlay').style.display='flex';
 };
 
+window.openTemplateForDay = function() {
+  window.closeDayOverlay();
+  openTemplatePicker();
+};
+
 window.openSheet = function() {
   editDayKey=null; editIdx=null;
   resetSheetFields();
@@ -995,6 +1028,7 @@ function resetSheetFields() {
 document.getElementById('addOverlay').addEventListener('click', e => { if(e.target===document.getElementById('addOverlay')) window.closeSheet(); });
 document.getElementById('dayOverlay').addEventListener('click', e => { if(e.target===document.getElementById('dayOverlay')) window.closeDayOverlay(); });
 document.getElementById('cardioOverlay').addEventListener('click', e => { if(e.target===document.getElementById('cardioOverlay')) window.closeCardioSheet(); });
+document.getElementById('historyDatePickOverlay').addEventListener('click', e => { if(e.target===document.getElementById('historyDatePickOverlay')) window.closeHistoryDatePick(); });
 
 // ── TYPE ──────────────────────────────────────────────────────────────────────
 window.setType = function(t) {
@@ -1112,6 +1146,78 @@ function renderHistory() {
       <div class="day-badge">${exs.length}</div></div>`;
   }).join('');
 }
+let historyCalViewDate = new Date();
+let historyCalSelectedKey = null;
+function historyCalKey(y, m, d) {
+  return y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+}
+function renderHistoryCalGrid() {
+  const y = historyCalViewDate.getFullYear();
+  const m = historyCalViewDate.getMonth();
+  document.getElementById('historyCalLabel').textContent =
+    historyCalViewDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const firstWeekday = new Date(y, m, 1).getDay();
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  const tKey = todayKey();
+  let html = '';
+  for (let i = 0; i < firstWeekday; i++) html += '<div></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = historyCalKey(y, m, d);
+    const isToday = key === tKey;
+    const isSelected = key === historyCalSelectedKey;
+    const hasActivity = (workouts[key] && workouts[key].length) || (cardioSessions[key] && cardioSessions[key].length);
+    let bg = 'background:var(--card2);color:var(--text);';
+    if (isToday) bg = 'background:var(--gold);color:#000;font-weight:700;';
+    let ring = isSelected ? 'box-shadow:0 0 0 2px var(--gold) inset;' : '';
+    html += `<div onclick="selectHistoryCalDate('${key}')" style="aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;touch-action:manipulation;${bg}${ring}">
+      <span style="font-size:11px">${d}</span>
+      ${hasActivity ? `<span style="width:3px;height:3px;border-radius:50%;background:${isToday ? '#000' : 'var(--gold)'};margin-top:1px"></span>` : ''}
+    </div>`;
+  }
+  document.getElementById('historyCalGrid').innerHTML = html;
+}
+function renderHistoryCalPreview() {
+  const el = document.getElementById('historyCalPreview');
+  const key = historyCalSelectedKey;
+  if (!key) { el.innerHTML = ''; return; }
+  const exs = workouts[key] || [];
+  const cardios = cardioSessions[key] || [];
+  const rows = exs.map((ex, i) => exCardHTML(ex, i, key)).join('') +
+               cardios.map((s, i) => cardioCardHTML(s, i, key)).join('');
+  el.innerHTML = `
+    <div style="border-top:1px solid var(--border);padding-top:10px;margin-top:2px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:13px;font-weight:700;color:var(--gold)">${fmtShort(key)}</div>
+        <button class="btn-gold" style="font-size:12px;padding:6px 12px" onclick="pickHistoryCalDate('${key}')">Open Day</button>
+      </div>
+      <div style="max-height:220px;overflow-y:auto">
+        ${rows || '<div class="empty-state">No exercises or cardio logged.</div>'}
+      </div>
+    </div>`;
+}
+window.historyCalNav = function(delta) {
+  historyCalViewDate = new Date(historyCalViewDate.getFullYear(), historyCalViewDate.getMonth() + delta, 1);
+  renderHistoryCalGrid();
+};
+window.selectHistoryCalDate = function(key) {
+  historyCalSelectedKey = key;
+  renderHistoryCalGrid();
+  renderHistoryCalPreview();
+};
+window.pickHistoryCalDate = function(key) {
+  closeHistoryDatePick();
+  openDayDetail(key);
+};
+window.openHistoryDatePick = function() {
+  historyCalViewDate = new Date();
+  historyCalSelectedKey = null;
+  renderHistoryCalGrid();
+  renderHistoryCalPreview();
+  document.getElementById('historyDatePickOverlay').style.display = 'flex';
+};
+window.closeHistoryDatePick = function() {
+  document.getElementById('historyDatePickOverlay').style.display = 'none';
+};
 window.openDayDetail = function(key) {
   activeDayKey = key;
   document.getElementById('dayTitle').textContent=key===todayKey()?'Today':fmtShort(key);
@@ -2184,10 +2290,16 @@ window.useTemplateToday = async function() {
   });
   await saveWorkoutDay(key);
   window.closeTemplateDetail();
-  activeDayKey = null;
-  switchTab('today');
-  renderToday();
-  showToast('&#10003; ' + t.name + ' loaded into Today');
+  if (key === todayKey()) {
+    activeDayKey = null;
+    switchTab('today');
+    renderToday();
+    showToast('&#10003; ' + t.name + ' loaded into Today');
+  } else {
+    renderHistory();
+    openDayDetail(key);
+    showToast('&#10003; ' + t.name + ' loaded into ' + fmtShort(key));
+  }
 };
 
 window.toggleShareTemplate = async function(id) {
@@ -2286,9 +2398,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     await saveWorkoutDay(key);
     window.closeTemplatePicker();
-    activeDayKey = null;
-    renderToday();
-    showToast('&#10003; ' + t.name + ' loaded into Today');
+    if (key === todayKey()) {
+      activeDayKey = null;
+      renderToday();
+      showToast('&#10003; ' + t.name + ' loaded into Today');
+    } else {
+      renderHistory();
+      openDayDetail(key);
+      showToast('&#10003; ' + t.name + ' loaded into ' + fmtShort(key));
+    }
   });
 });
 
