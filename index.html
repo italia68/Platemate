@@ -316,7 +316,7 @@
       <div class="topbar-user" id="topUser"></div>
     </div>
     <div class="scroll-body" id="todayBody"></div>
-    <button class="fab" id="todayFab" onclick="toggleTodayFab()">+</button>
+    <button class="fab" id="todayFab" onclick="toggleTodayFab()" title="Add exercise, cardio, or template">+</button>
     <div id="todayFabMenu" style="display:none;position:fixed;bottom:150px;right:16px;z-index:51;display:none;flex-direction:column;gap:8px;align-items:flex-end">
       <div style="display:flex;align-items:center;gap:10px">
         <span style="background:#111;color:#f0f0f0;font-size:13px;padding:6px 12px;border-radius:20px;border:1px solid rgba(255,182,18,0.3)">Template</span>
@@ -369,11 +369,11 @@
   </div>
 
   <nav class="bottom-nav">
-    <button class="nav-btn active" id="navToday"     onclick="switchTab('today')">    <span class="ni">&#127947;</span>Today    </button>
-    <button class="nav-btn"        id="navHistory"   onclick="switchTab('history')">  <span class="ni">&#128197;</span>History  </button>
-    <button class="nav-btn"        id="navCardio"    onclick="switchTab('cardio')">   <span class="ni">&#127939;</span>Cardio   </button>
-    <button class="nav-btn"        id="navTemplates" onclick="switchTab('templates')"><span class="ni">&#128203;</span>Templates</button>
-    <button class="nav-btn"        id="navProfile"   onclick="switchTab('profile')">  <span class="ni">&#128100;</span>Profile  </button>
+    <button class="nav-btn active" id="navToday"     onclick="switchTab('today')"     title="Log today's exercises and cardio">    <span class="ni">&#127947;</span>Today    </button>
+    <button class="nav-btn"        id="navHistory"   onclick="switchTab('history')"   title="View and edit past workout days">  <span class="ni">&#128197;</span>History  </button>
+    <button class="nav-btn"        id="navCardio"    onclick="switchTab('cardio')"    title="View today's cardio sessions">   <span class="ni">&#127939;</span>Cardio   </button>
+    <button class="nav-btn"        id="navTemplates" onclick="switchTab('templates')" title="Saved workout templates you can reuse"><span class="ni">&#128203;</span>Templates</button>
+    <button class="nav-btn"        id="navProfile"   onclick="switchTab('profile')"   title="Your account and app settings">  <span class="ni">&#128100;</span>Profile  </button>
   </nav>
 </div>
 
