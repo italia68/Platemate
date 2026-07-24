@@ -368,6 +368,8 @@
     <button class="fab" onclick="openCreateTemplate()">+</button>
   </div>
 
+  <button onclick="startNavTour()" title="Take a quick tour" style="position:fixed;top:14px;right:14px;z-index:60;background:var(--card2);border:1px solid var(--gold);border-radius:50%;width:32px;height:32px;color:var(--gold);font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation">?</button>
+
   <nav class="bottom-nav">
     <button class="nav-btn active" id="navToday"     onclick="switchTab('today')"     title="Log today's exercises and cardio">    <span class="ni">&#127947;</span>Today    </button>
     <button class="nav-btn"        id="navHistory"   onclick="switchTab('history')"   title="View and edit past workout days">  <span class="ni">&#128197;</span>History  </button>
@@ -2550,6 +2552,64 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+// ── NAV TOUR (touch-friendly walkthrough) ──────────────────────────────────
+const navTourSteps = [
+  { id: 'navToday',     title: 'Today',     desc: "Log today's exercises and cardio." },
+  { id: 'navHistory',   title: 'History',   desc: 'View and edit past workout days — tap 📅 Log Past Day to jump to any date.' },
+  { id: 'navCardio',    title: 'Cardio',    desc: "See today's cardio sessions." },
+  { id: 'navTemplates', title: 'Templates', desc: 'Saved workouts (with exercises and/or cardio) you can reuse on any day.' },
+  { id: 'navProfile',   title: 'Profile',   desc: 'Your account and app settings.' }
+];
+let navTourIdx = 0;
+
+function navTourPosition() {
+  const step = navTourSteps[navTourIdx];
+  const el = document.getElementById(step.id);
+  if (!el) { navTourNext(); return; }
+  const r = el.getBoundingClientRect();
+  const pad = 6;
+  const hi = document.getElementById('navTourHighlight');
+  hi.style.top = (r.top - pad) + 'px';
+  hi.style.left = (r.left - pad) + 'px';
+  hi.style.width = (r.width + pad*2) + 'px';
+  hi.style.height = (r.height + pad*2) + 'px';
+
+  document.getElementById('navTourTitle').textContent = step.title;
+  document.getElementById('navTourDesc').textContent = step.desc;
+  document.getElementById('navTourNextBtn').textContent = navTourIdx === navTourSteps.length - 1 ? 'Got it!' : 'Next';
+
+  const bubble = document.getElementById('navTourBubble');
+  const bw = 240;
+  let left = r.left + r.width/2 - bw/2;
+  left = Math.max(10, Math.min(left, window.innerWidth - bw - 10));
+  bubble.style.left = left + 'px';
+  bubble.style.top = (r.top - pad - 12 - bubble.offsetHeight) + 'px';
+}
+
+window.startNavTour = function() {
+  navTourIdx = 0;
+  document.getElementById('navTourOverlay').style.display = 'block';
+  navTourPosition();
+  setTimeout(navTourPosition, 20); // recalc once bubble has real height
+};
+
+window.navTourNext = function() {
+  navTourIdx++;
+  if (navTourIdx >= navTourSteps.length) { window.skipNavTour(); return; }
+  navTourPosition();
+};
+
+window.skipNavTour = function() {
+  document.getElementById('navTourOverlay').style.display = 'none';
+  try { localStorage.setItem('pm_seen_nav_tour', '1'); } catch(e){}
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+  let seen = null;
+  try { seen = localStorage.getItem('pm_seen_nav_tour'); } catch(e){}
+  if (!seen) setTimeout(function(){ window.startNavTour(); }, 800);
+});
+
 function showToast(msg) {
   var el = document.getElementById('toastNotif');
   document.getElementById('toastText').innerHTML = msg;
@@ -2702,6 +2762,19 @@ function showToast(msg) {
     <button class="btn-gold" style="width:100%;padding:12px;font-size:14px" onclick="closeTemplatePicker();openCreateTemplate()">+ Create New Template</button>
   </div>
   <div id="templatePickerList" style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 16px;"></div>
+</div>
+
+<!-- NAV TOUR OVERLAY -->
+<div id="navTourOverlay" style="display:none;position:fixed;inset:0;z-index:800;">
+  <div id="navTourHighlight" style="position:absolute;border-radius:14px;pointer-events:none;transition:top .25s ease,left .25s ease,width .25s ease,height .25s ease;box-shadow:0 0 0 9999px rgba(0,0,0,0.75);"></div>
+  <div id="navTourBubble" style="position:absolute;width:240px;background:var(--card2);border:1px solid var(--gold);border-radius:12px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.5);transition:top .25s ease,left .25s ease;">
+    <div id="navTourTitle" style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:4px"></div>
+    <div id="navTourDesc" style="font-size:13px;color:var(--text);line-height:1.4;margin-bottom:12px"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <button onclick="skipNavTour()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;padding:6px 0;touch-action:manipulation">Skip</button>
+      <button onclick="navTourNext()" class="btn-gold" id="navTourNextBtn" style="font-size:12px;padding:8px 16px">Next</button>
+    </div>
+  </div>
 </div>
 
 <!-- TOAST NOTIFICATION -->
