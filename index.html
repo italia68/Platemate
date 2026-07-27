@@ -316,7 +316,7 @@
       <div class="topbar-user" id="topUser"></div>
     </div>
     <div class="scroll-body" id="todayBody"></div>
-    <button class="fab" id="todayFab" onclick="toggleTodayFab()" title="Add exercise, cardio, or template">+</button>
+    <button class="fab" id="todayFab" onclick="toggleTodayFab()">+</button>
     <div id="todayFabMenu" style="display:none;position:fixed;bottom:150px;right:16px;z-index:51;display:none;flex-direction:column;gap:8px;align-items:flex-end">
       <div style="display:flex;align-items:center;gap:10px">
         <span style="background:#111;color:#f0f0f0;font-size:13px;padding:6px 12px;border-radius:20px;border:1px solid rgba(255,182,18,0.3)">Template</span>
@@ -334,10 +334,7 @@
   </div>
 
   <div id="tabHistory" style="display:none;flex-direction:column;flex:1;overflow:hidden">
-    <div class="topbar" style="justify-content:space-between">
-      <div class="topbar-title">History</div>
-      <button onclick="openHistoryDatePick()" style="background:var(--gold);color:#000;border:none;border-radius:20px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;touch-action:manipulation">&#128197; Log Past Day</button>
-    </div>
+    <div class="topbar"><div class="topbar-title">History</div></div>
     <div class="scroll-body" id="historyBody"></div>
   </div>
 
@@ -368,14 +365,12 @@
     <button class="fab" onclick="openCreateTemplate()">+</button>
   </div>
 
-  <button onclick="startNavTour()" title="Take a quick tour" style="position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:60;background:var(--card2);border:1px solid var(--gold);border-radius:50%;width:32px;height:32px;color:var(--gold);font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation">?</button>
-
   <nav class="bottom-nav">
-    <button class="nav-btn active" id="navToday"     onclick="switchTab('today')"     title="Log today's exercises and cardio">    <span class="ni">&#127947;</span>Today    </button>
-    <button class="nav-btn"        id="navHistory"   onclick="switchTab('history')"   title="View and edit past workout days">  <span class="ni">&#128197;</span>History  </button>
-    <button class="nav-btn"        id="navCardio"    onclick="switchTab('cardio')"    title="View today's cardio sessions">   <span class="ni">&#127939;</span>Cardio   </button>
-    <button class="nav-btn"        id="navTemplates" onclick="switchTab('templates')" title="Saved workout templates you can reuse"><span class="ni">&#128203;</span>Templates</button>
-    <button class="nav-btn"        id="navProfile"   onclick="switchTab('profile')"   title="Your account and app settings">  <span class="ni">&#128100;</span>Profile  </button>
+    <button class="nav-btn active" id="navToday"     onclick="switchTab('today')">    <span class="ni">&#127947;</span>Today    </button>
+    <button class="nav-btn"        id="navHistory"   onclick="switchTab('history')">  <span class="ni">&#128197;</span>History  </button>
+    <button class="nav-btn"        id="navCardio"    onclick="switchTab('cardio')">   <span class="ni">&#127939;</span>Cardio   </button>
+    <button class="nav-btn"        id="navTemplates" onclick="switchTab('templates')"><span class="ni">&#128203;</span>Templates</button>
+    <button class="nav-btn"        id="navProfile"   onclick="switchTab('profile')">  <span class="ni">&#128100;</span>Profile  </button>
   </nav>
 </div>
 
@@ -488,37 +483,12 @@
     <div style="display:flex;gap:8px;margin-bottom:14px">
       <button class="btn-gold" style="flex:1;font-size:13px;padding:10px" onclick="openSheetForDay()">+ Exercise</button>
       <button class="btn-grey" style="flex:1;font-size:13px;padding:10px" onclick="openCardioForDay()">+ Cardio</button>
-      <button class="btn-grey" style="flex:1;font-size:13px;padding:10px" onclick="openTemplateForDay()">+ Template</button>
     </div>
     <div id="dayBody"></div>
   </div>
 </div>
 
-<!-- HISTORY DATE PICK OVERLAY -->
-  <div class="overlay" id="historyDatePickOverlay">
-    <div class="sheet" style="max-width:340px">
-      <div class="sheet-handle"></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <button onclick="historyCalNav(-1)" style="background:var(--card2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;color:var(--gold);font-size:14px;cursor:pointer;touch-action:manipulation">&#8249;</button>
-        <div id="historyCalLabel" style="font-size:14px;font-weight:700;color:var(--gold)"></div>
-        <button onclick="historyCalNav(1)" style="background:var(--card2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;color:var(--gold);font-size:14px;cursor:pointer;touch-action:manipulation">&#8250;</button>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px">
-        <div style="text-align:center;font-size:10px;color:var(--muted);font-weight:600">S</div>
-        <div style="text-align:center;font-size:10px;color:var(--muted);font-weight:600">M</div>
-        <div style="text-align:center;font-size:10px;color:var(--muted);font-weight:600">T</div>
-        <div style="text-align:center;font-size:10px;color:var(--muted);font-weight:600">W</div>
-        <div style="text-align:center;font-size:10px;color:var(--muted);font-weight:600">T</div>
-        <div style="text-align:center;font-size:10px;color:var(--muted);font-weight:600">F</div>
-        <div style="text-align:center;font-size:10px;color:var(--muted);font-weight:600">S</div>
-      </div>
-      <div id="historyCalGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:10px"></div>
-      <div id="historyCalPreview"></div>
-      <button class="btn-grey" style="width:100%;margin-top:10px" onclick="closeHistoryDatePick()">Close</button>
-    </div>
-  </div>
-
-  <!-- CARDIO OVERLAY -->
+<!-- CARDIO OVERLAY -->
 <div class="overlay" id="cardioOverlay">
   <div class="sheet">
     <div class="sheet-handle"></div>
@@ -611,7 +581,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBBGigDjyeo55wJQWvJkt4W-c_1cbfVsQU",
@@ -649,11 +619,6 @@ const machWeights = [10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     currentUser = user;
-    setDoc(doc(db, 'users', user.uid), {
-      email: user.email,
-      displayName: user.displayName || '',
-      lastLogin: serverTimestamp()
-    }, { merge: true }).catch(e => console.error('lastLogin update error', e));
     await loadAllData();
     await loadTemplates();
     showMain();
@@ -769,12 +734,6 @@ window.doAuth = async function() {
       if (!name) { errEl.textContent = 'Please enter your name.'; btn.disabled=false; return; }
       const cred = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(cred.user, { displayName: name });
-      await setDoc(doc(db, 'users', cred.user.uid), {
-        email: email,
-        displayName: name,
-        createdAt: serverTimestamp(),
-        lastLogin: serverTimestamp()
-      }, { merge: true });
     } else {
       await signInWithEmailAndPassword(auth, email, password);
     }
@@ -995,11 +954,6 @@ window.openCardioForDay = function() {
   document.getElementById('cardioOverlay').style.display='flex';
 };
 
-window.openTemplateForDay = function() {
-  window.closeDayOverlay();
-  openTemplatePicker();
-};
-
 window.openSheet = function() {
   editDayKey=null; editIdx=null;
   resetSheetFields();
@@ -1030,7 +984,6 @@ function resetSheetFields() {
 document.getElementById('addOverlay').addEventListener('click', e => { if(e.target===document.getElementById('addOverlay')) window.closeSheet(); });
 document.getElementById('dayOverlay').addEventListener('click', e => { if(e.target===document.getElementById('dayOverlay')) window.closeDayOverlay(); });
 document.getElementById('cardioOverlay').addEventListener('click', e => { if(e.target===document.getElementById('cardioOverlay')) window.closeCardioSheet(); });
-document.getElementById('historyDatePickOverlay').addEventListener('click', e => { if(e.target===document.getElementById('historyDatePickOverlay')) window.closeHistoryDatePick(); });
 
 // ── TYPE ──────────────────────────────────────────────────────────────────────
 window.setType = function(t) {
@@ -1148,78 +1101,6 @@ function renderHistory() {
       <div class="day-badge">${exs.length}</div></div>`;
   }).join('');
 }
-let historyCalViewDate = new Date();
-let historyCalSelectedKey = null;
-function historyCalKey(y, m, d) {
-  return y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
-}
-function renderHistoryCalGrid() {
-  const y = historyCalViewDate.getFullYear();
-  const m = historyCalViewDate.getMonth();
-  document.getElementById('historyCalLabel').textContent =
-    historyCalViewDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-  const firstWeekday = new Date(y, m, 1).getDay();
-  const daysInMonth = new Date(y, m + 1, 0).getDate();
-  const tKey = todayKey();
-  let html = '';
-  for (let i = 0; i < firstWeekday; i++) html += '<div></div>';
-  for (let d = 1; d <= daysInMonth; d++) {
-    const key = historyCalKey(y, m, d);
-    const isToday = key === tKey;
-    const isSelected = key === historyCalSelectedKey;
-    const hasActivity = (workouts[key] && workouts[key].length) || (cardioSessions[key] && cardioSessions[key].length);
-    let bg = 'background:var(--card2);color:var(--text);';
-    if (isToday) bg = 'background:var(--gold);color:#000;font-weight:700;';
-    let ring = isSelected ? 'box-shadow:0 0 0 2px var(--gold) inset;' : '';
-    html += `<div onclick="selectHistoryCalDate('${key}')" style="aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;touch-action:manipulation;${bg}${ring}">
-      <span style="font-size:11px">${d}</span>
-      ${hasActivity ? `<span style="width:3px;height:3px;border-radius:50%;background:${isToday ? '#000' : 'var(--gold)'};margin-top:1px"></span>` : ''}
-    </div>`;
-  }
-  document.getElementById('historyCalGrid').innerHTML = html;
-}
-function renderHistoryCalPreview() {
-  const el = document.getElementById('historyCalPreview');
-  const key = historyCalSelectedKey;
-  if (!key) { el.innerHTML = ''; return; }
-  const exs = workouts[key] || [];
-  const cardios = cardioSessions[key] || [];
-  const rows = exs.map((ex, i) => exCardHTML(ex, i, key)).join('') +
-               cardios.map((s, i) => cardioCardHTML(s, i, key)).join('');
-  el.innerHTML = `
-    <div style="border-top:1px solid var(--border);padding-top:10px;margin-top:2px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <div style="font-size:13px;font-weight:700;color:var(--gold)">${fmtShort(key)}</div>
-        <button class="btn-gold" style="font-size:12px;padding:6px 12px" onclick="pickHistoryCalDate('${key}')">Open Day</button>
-      </div>
-      <div style="max-height:220px;overflow-y:auto">
-        ${rows || '<div class="empty-state">No exercises or cardio logged.</div>'}
-      </div>
-    </div>`;
-}
-window.historyCalNav = function(delta) {
-  historyCalViewDate = new Date(historyCalViewDate.getFullYear(), historyCalViewDate.getMonth() + delta, 1);
-  renderHistoryCalGrid();
-};
-window.selectHistoryCalDate = function(key) {
-  historyCalSelectedKey = key;
-  renderHistoryCalGrid();
-  renderHistoryCalPreview();
-};
-window.pickHistoryCalDate = function(key) {
-  closeHistoryDatePick();
-  openDayDetail(key);
-};
-window.openHistoryDatePick = function() {
-  historyCalViewDate = new Date();
-  historyCalSelectedKey = null;
-  renderHistoryCalGrid();
-  renderHistoryCalPreview();
-  document.getElementById('historyDatePickOverlay').style.display = 'flex';
-};
-window.closeHistoryDatePick = function() {
-  document.getElementById('historyDatePickOverlay').style.display = 'none';
-};
 window.openDayDetail = function(key) {
   activeDayKey = key;
   document.getElementById('dayTitle').textContent=key===todayKey()?'Today':fmtShort(key);
@@ -1270,22 +1151,8 @@ window.saveCardio = async function() {
   const notes=document.getElementById('cardioNotes').value.trim();
   if(!type){alert('Please select an activity type.');return;}
   if(!mins&&!secs){alert('Please enter a duration.');return;}
-  if (templateCardioMode) {
-    const tEntry = {type,mins,secs,dist,dunit,cals,notes};
-    if (editTemplateCardioIdx !== null) {
-      templateCardio[editTemplateCardioIdx] = tEntry;
-    } else {
-      templateCardio.push(tEntry);
-    }
-    templateCardioMode = false;
-    editTemplateCardioIdx = null;
-    window.closeCardioSheet();
-    renderTemplateCardioList();
-    document.getElementById('createTemplateOverlay').style.display = 'flex';
-    return;
-  }
   const entry={type,mins,secs,dist,dunit,cals,notes,ts:Date.now()};
-  const key=activeDayKey||todayKey();
+  const key=todayKey();
   if(editCardioKey!==null&&editCardioIdx!==null){
     entry.ts=cardioSessions[editCardioKey][editCardioIdx].ts;
     cardioSessions[editCardioKey][editCardioIdx]=entry;
@@ -1297,15 +1164,9 @@ window.saveCardio = async function() {
     if(!cardioSessions[key])cardioSessions[key]=[];
     cardioSessions[key].push(entry);
     await saveCardioDay(key);
-    activeDayKey=null;
     window.closeCardioSheet();
-    if(key===todayKey()){
-      renderCardioToday();
-      renderToday();
-    } else {
-      renderHistory();
-      openDayDetail(key);
-    }
+    renderCardioToday();
+    renderToday();
   }
 };
 
@@ -1667,6 +1528,40 @@ function setExNameDisplay(name) {
   document.getElementById('exName').value = name;
   document.getElementById('exNameDisplayText').textContent = name || 'Select exercise...';
   document.getElementById('exNameDisplay').style.color = name ? 'var(--text)' : 'var(--muted)';
+  autoDetectMachine(name);
+}
+
+function autoDetectMachine(name) {
+  if (!name) return;
+  const m = name.match(/\(([^)]*)\)/);
+  if (!m) return;
+  const bracket = m[1].toLowerCase();
+  if (!bracket.includes('machine')) return;
+
+  // Switch to Machine type
+  window.setType('machine');
+
+  // Try to find a matching machine name from MACHINE_DATA
+  const baseName = name.replace(/\s*\([^)]*\)\s*/g, '').trim().toLowerCase();
+  let bestMatch = null;
+  MACHINE_DATA.forEach(function(group) {
+    group.items.forEach(function(item) {
+      const itemLower = item.toLowerCase();
+      if (itemLower === baseName || itemLower === bracket ||
+          itemLower.includes(baseName) || baseName.includes(itemLower.replace(/^smith machine\s*/,''))) {
+        if (!bestMatch) bestMatch = item;
+      }
+    });
+  });
+  // Fallback: try the bracket content itself (e.g. "Smith Machine")
+  if (!bestMatch) {
+    MACHINE_DATA.forEach(function(group) {
+      group.items.forEach(function(item) {
+        if (item.toLowerCase().includes(bracket)) { if (!bestMatch) bestMatch = item; }
+      });
+    });
+  }
+  if (bestMatch) setMachineDisplay(bestMatch);
 }
 
 window.openExPicker = function(mode) {
@@ -1998,12 +1893,9 @@ let communityTemplates = [];  // from sharedTemplates collection
 let templateView = 'my';
 let activeTemplateId = null;
 let templateExercises = [];   // exercises being built in create flow
-let templateCardio = [];      // cardio sessions being built in create flow
 let editTemplateId = null;
 let templateExMode = false;
 let editTemplateExIdx = null;
-let templateCardioMode = false;
-let editTemplateCardioIdx = null;
 
 async function loadTemplates() {
   if (!currentUser) return;
@@ -2050,8 +1942,6 @@ function renderMyTemplates() {
   }
   body.innerHTML = list.map(([id, t]) => {
     const exCount = (t.exercises||[]).length;
-    const cCount = (t.cardio||[]).length;
-    const countLabel = exCount + ' exercise' + (exCount!==1?'s':'') + (cCount ? ' · ' + cCount + ' cardio' : '');
     const shared = t.shared ? '<span style="font-size:11px;color:var(--gold);margin-left:6px">&#127760; Shared</span>' : '';
     return '<div class="day-card tmpl-card" style="cursor:pointer" data-id="' + id + '">' +
       '<div style="display:flex;justify-content:space-between;align-items:flex-start">' +
@@ -2059,7 +1949,7 @@ function renderMyTemplates() {
           '<div style="font-size:16px;font-weight:700;color:var(--text)">' + t.name + shared + '</div>' +
           (t.desc ? '<div style="font-size:12px;color:var(--muted);margin-top:2px">' + t.desc + '</div>' : '') +
         '</div>' +
-        '<div style="font-size:12px;color:var(--gold);font-weight:600">' + countLabel + '</div>' +
+        '<div style="font-size:12px;color:var(--gold);font-weight:600">' + exCount + ' exercise' + (exCount!==1?'s':'') + '</div>' +
       '</div>' +
     '</div>';
   }).join('');
@@ -2073,8 +1963,6 @@ function renderCommunityTemplates() {
   }
   body.innerHTML = communityTemplates.map(t => {
     const exCount = (t.exercises||[]).length;
-    const cCount = (t.cardio||[]).length;
-    const countLabel = exCount + ' exercise' + (exCount!==1?'s':'') + (cCount ? ' · ' + cCount + ' cardio' : '');
     const hwp = t.isHWP ? '<span style="font-size:10px;background:var(--gold);color:#000;padding:2px 6px;border-radius:10px;font-weight:700;margin-left:6px">HWP</span>' : '';
     return '<div class="day-card com-tmpl-card" style="cursor:pointer" data-id="' + t.id + '">' +
       '<div style="display:flex;justify-content:space-between;align-items:flex-start">' +
@@ -2082,7 +1970,7 @@ function renderCommunityTemplates() {
           '<div style="font-size:16px;font-weight:700;color:var(--text)">' + t.name + hwp + '</div>' +
           '<div style="font-size:12px;color:var(--muted);margin-top:2px">by ' + (t.createdBy||'Anonymous') + (t.desc ? ' · ' + t.desc : '') + '</div>' +
         '</div>' +
-        '<div style="font-size:12px;color:var(--gold);font-weight:600">' + countLabel + '</div>' +
+        '<div style="font-size:12px;color:var(--gold);font-weight:600">' + exCount + ' exercises</div>' +
       '</div>' +
     '</div>';
   }).join('');
@@ -2091,13 +1979,11 @@ function renderCommunityTemplates() {
 window.openCreateTemplate = function() {
   editTemplateId = null;
   templateExercises = [];
-  templateCardio = [];
   document.getElementById('templateName').value = '';
   document.getElementById('templateDesc').value = '';
   document.getElementById('createTemplateTitleLabel').textContent = 'New Template';
   document.getElementById('saveTemplateBtn').textContent = 'Save Template';
   renderTemplateExList();
-  renderTemplateCardioList();
   document.getElementById('createTemplateOverlay').style.display = 'flex';
 };
 
@@ -2187,76 +2073,6 @@ window.removeTemplateEx = function(i) {
   renderTemplateExList();
 };
 
-window.addTemplateCardio = function() {
-  document.getElementById('createTemplateOverlay').style.display = 'none';
-  templateCardioMode = true;
-  editTemplateCardioIdx = null;
-  editCardioKey = null; editCardioIdx = null;
-  document.getElementById('cardioSheetTitle').textContent = 'Add Cardio to Template';
-  document.getElementById('cardioSaveBtn').textContent = 'Save Cardio';
-  ['cardioMins','cardioSecs','cardioDist','cardioCals','cardioNotes'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('cardioType').value=''; setCardioTypeDisplay('');
-  document.getElementById('cardioDistUnit').value='mi';
-  document.getElementById('cardioOverlay').style.display='flex';
-};
-
-window.editTemplateCardio = function(idx) {
-  const s = templateCardio[idx];
-  document.getElementById('createTemplateOverlay').style.display = 'none';
-  templateCardioMode = true;
-  editTemplateCardioIdx = idx;
-  editCardioKey = null; editCardioIdx = null;
-  document.getElementById('cardioSheetTitle').textContent = 'Edit Template Cardio';
-  document.getElementById('cardioSaveBtn').textContent = 'Update Cardio';
-  setCardioTypeDisplay(s.type);
-  document.getElementById('cardioMins').value = s.mins||'';
-  document.getElementById('cardioSecs').value = s.secs||'';
-  document.getElementById('cardioDist').value = s.dist||'';
-  document.getElementById('cardioDistUnit').value = s.dunit||'mi';
-  document.getElementById('cardioCals').value = s.cals||'';
-  document.getElementById('cardioNotes').value = s.notes||'';
-  document.getElementById('cardioOverlay').style.display='flex';
-};
-
-function renderTemplateCardioList() {
-  const el = document.getElementById('templateCardioList');
-  if (!templateCardio.length) {
-    el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px">No cardio added yet</div>';
-    return;
-  }
-  el.innerHTML = templateCardio.map((s,i) => {
-    const dur = (s.mins||0)+'m'+(s.secs?' '+s.secs+'s':'');
-    const dist = s.dist ? s.dist+' '+s.dunit : '';
-    const cals = s.cals ? s.cals+' cal' : '';
-    return '<div class="ex-card tmpl-cardio-card" data-idx="' + i + '" style="cursor:pointer;margin-bottom:10px">' +
-      '<div class="ex-header">' +
-        '<div><div class="ex-name">' + s.type + '</div></div>' +
-        '<div class="ex-actions"><button class="delete-btn" onclick="event.stopPropagation();removeTemplateCardio(' + i + ')">&#215;</button></div>' +
-      '</div>' +
-      '<div class="ex-stats">' +
-        '<div class="ex-stat"><span class="ex-stat-label">Duration</span><span class="ex-stat-val">' + dur + '</span></div>' +
-        (dist ? '<div class="ex-stat"><span class="ex-stat-label">Distance</span><span class="ex-stat-val">' + dist + '</span></div>' : '') +
-        (cals ? '<div class="ex-stat"><span class="ex-stat-label">Calories</span><span class="ex-stat-val">' + cals + '</span></div>' : '') +
-      '</div>' +
-    '</div>';
-  }).join('');
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  var tcl = document.getElementById('templateCardioList');
-  if (tcl) tcl.addEventListener('click', function(e) {
-    var card = e.target.closest('.tmpl-cardio-card');
-    if (card && card.dataset.idx !== undefined && !e.target.closest('.delete-btn')) {
-      editTemplateCardio(parseInt(card.dataset.idx));
-    }
-  });
-});
-
-window.removeTemplateCardio = function(i) {
-  templateCardio.splice(i,1);
-  renderTemplateCardioList();
-};
-
 window.removeTmplSet = function(ei, si) {
   if (templateExercises[ei].setData.length <= 1) return;
   templateExercises[ei].setData.splice(si, 1);
@@ -2293,12 +2109,11 @@ window.handleTemplateExChange = function(inp) {
 window.saveTemplate = async function() {
   const name = document.getElementById('templateName').value.trim();
   if (!name) { alert('Please enter a template name.'); return; }
-  if (!templateExercises.length && !templateCardio.length) { alert('Please add at least one exercise or cardio session.'); return; }
+  if (!templateExercises.length) { alert('Please add at least one exercise.'); return; }
   const data = {
     name,
     desc: document.getElementById('templateDesc').value.trim(),
     exercises: templateExercises,
-    cardio: templateCardio,
     createdBy: currentUser.displayName || 'Anonymous',
     createdAt: Date.now(),
     shared: false
@@ -2314,17 +2129,6 @@ window.saveTemplate = async function() {
     renderMyTemplates();
   } catch(e) { alert('Error saving template: ' + e.message); }
 };
-
-function tmplCardioRowsHTML(cardio) {
-  return (cardio||[]).map(function(s) {
-    const dur = (s.mins||0)+'m'+(s.secs?' '+s.secs+'s':'');
-    const dist = s.dist ? s.dist+' '+s.dunit : '';
-    return '<div class="day-card" style="padding:12px 14px;margin-bottom:8px">' +
-      '<div style="font-size:15px;font-weight:600;color:var(--text)">' + s.type + '</div>' +
-      '<div style="font-size:12px;color:var(--gold);margin-top:4px">' + dur + (dist ? ' · ' + dist : '') + '</div>' +
-    '</div>';
-  }).join('');
-}
 
 window.openTemplateDetail = function(id) {
   activeTemplateId = id;
@@ -2342,7 +2146,6 @@ window.openTemplateDetail = function(id) {
           '<div style="font-size:12px;color:var(--gold);margin-top:4px">' + e.sets + ' sets × ' + e.reps + ' reps</div>' +
         '</div>'
       ).join('') +
-      tmplCardioRowsHTML(t.cardio) +
     '</div>';
   document.getElementById('templateDetailOverlay').style.display = 'flex';
 };
@@ -2356,7 +2159,6 @@ window.editActiveTemplate = function() {
   if (!t) return;
   editTemplateId = activeTemplateId;
   templateExercises = JSON.parse(JSON.stringify(t.exercises || []));
-  templateCardio = JSON.parse(JSON.stringify(t.cardio || []));
   // ensure setData exists on each exercise
   templateExercises.forEach(function(e) {
     if (!e.setData) e.setData = Array(e.sets).fill(null).map(function(_,i) {
@@ -2370,7 +2172,6 @@ window.editActiveTemplate = function() {
   document.getElementById('createTemplateTitleLabel').textContent = 'Edit Template';
   document.getElementById('saveTemplateBtn').textContent = 'Save Changes';
   renderTemplateExList();
-  renderTemplateCardioList();
   window.closeTemplateDetail();
   document.getElementById('createTemplateOverlay').style.display = 'flex';
 };
@@ -2405,29 +2206,11 @@ window.useTemplateToday = async function() {
     });
   });
   await saveWorkoutDay(key);
-  if ((t.cardio||[]).length) {
-    if (!cardioSessions[key]) cardioSessions[key] = [];
-    t.cardio.forEach(s => {
-      cardioSessions[key].push({
-        type: s.type, mins: s.mins||0, secs: s.secs||0,
-        dist: s.dist||0, dunit: s.dunit||'mi', cals: s.cals||0,
-        notes: s.notes||'', ts: Date.now()
-      });
-    });
-    await saveCardioDay(key);
-  }
   window.closeTemplateDetail();
-  if (key === todayKey()) {
-    activeDayKey = null;
-    switchTab('today');
-    renderToday();
-    renderCardioToday();
-    showToast('&#10003; ' + t.name + ' loaded into Today');
-  } else {
-    renderHistory();
-    openDayDetail(key);
-    showToast('&#10003; ' + t.name + ' loaded into ' + fmtShort(key));
-  }
+  activeDayKey = null;
+  switchTab('today');
+  renderToday();
+  showToast('&#10003; ' + t.name + ' loaded into Today');
 };
 
 window.toggleShareTemplate = async function(id) {
@@ -2465,13 +2248,12 @@ window.openCommunityTemplate = function(id) {
           '<div style="font-size:12px;color:var(--gold);margin-top:4px">' + e.sets + ' sets × ' + e.reps + ' reps</div>' +
         '</div>'
       ).join('') +
-      tmplCardioRowsHTML(t.cardio) +
     '</div>';
   document.getElementById('templateDetailOverlay').style.display = 'flex';
 };
 
 window.copyToMyTemplates = async function(t) {
-  const copy = { name: t.name, desc: t.desc||'', exercises: t.exercises||[], cardio: t.cardio||[], createdBy: currentUser.displayName||'Anonymous', createdAt: Date.now(), shared: false, copiedFrom: t.createdBy };
+  const copy = { name: t.name, desc: t.desc||'', exercises: t.exercises||[], createdBy: currentUser.displayName||'Anonymous', createdAt: Date.now(), shared: false, copiedFrom: t.createdBy };
   await addDoc(collection(db, 'users', uid(), 'templates'), copy);
   await loadTemplates();
   alert('Copied to My Templates!');
@@ -2526,96 +2308,13 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
     await saveWorkoutDay(key);
-    if ((t.cardio||[]).length) {
-      if (!cardioSessions[key]) cardioSessions[key] = [];
-      t.cardio.forEach(function(s) {
-        cardioSessions[key].push({
-          type: s.type, mins: s.mins||0, secs: s.secs||0,
-          dist: s.dist||0, dunit: s.dunit||'mi', cals: s.cals||0,
-          notes: s.notes||'', ts: Date.now()
-        });
-      });
-      await saveCardioDay(key);
-    }
     window.closeTemplatePicker();
-    if (key === todayKey()) {
-      activeDayKey = null;
-      renderToday();
-      renderCardioToday();
-      showToast('&#10003; ' + t.name + ' loaded into Today');
-    } else {
-      renderHistory();
-      openDayDetail(key);
-      showToast('&#10003; ' + t.name + ' loaded into ' + fmtShort(key));
-    }
+    activeDayKey = null;
+    renderToday();
+    showToast('&#10003; ' + t.name + ' loaded into Today');
   });
 });
 
-
-// ── NAV TOUR (touch-friendly walkthrough) ──────────────────────────────────
-const navTourSteps = [
-  { id: 'navToday',     title: 'Today',     desc: "Log today's exercises and cardio." },
-  { id: 'navHistory',   title: 'History',   desc: 'View and edit past workout days — tap 📅 Log Past Day to jump to any date.' },
-  { id: 'navCardio',    title: 'Cardio',    desc: "See today's cardio sessions." },
-  { id: 'navTemplates', title: 'Templates', desc: 'Saved workouts (with exercises and/or cardio) you can reuse on any day.' },
-  { id: 'navProfile',   title: 'Profile',   desc: 'Your account and app settings.' }
-];
-let navTourIdx = 0;
-
-function navTourClearHighlight() {
-  navTourSteps.forEach(function(s) {
-    const el = document.getElementById(s.id);
-    if (el) {
-      el.style.position = '';
-      el.style.zIndex = '';
-      el.style.background = '';
-      el.style.borderRadius = '';
-      el.style.boxShadow = '';
-    }
-  });
-}
-
-function navTourShowStep() {
-  navTourClearHighlight();
-  const step = navTourSteps[navTourIdx];
-  const el = document.getElementById(step.id);
-  if (el) {
-    el.style.position = 'relative';
-    el.style.zIndex = '801';
-    el.style.background = 'var(--card2)';
-    el.style.borderRadius = '10px';
-    el.style.boxShadow = '0 0 0 2px var(--gold)';
-  }
-  document.getElementById('navTourTitle').textContent = step.title;
-  document.getElementById('navTourDesc').textContent = step.desc;
-  document.getElementById('navTourNextBtn').textContent = navTourIdx === navTourSteps.length - 1 ? 'Got it!' : 'Next';
-}
-
-window.startNavTour = function() {
-  navTourIdx = 0;
-  document.getElementById('navTourOverlay').style.display = 'block';
-  document.getElementById('navTourBubble').style.display = 'block';
-  navTourShowStep();
-};
-
-window.navTourNext = function() {
-  navTourIdx++;
-  if (navTourIdx >= navTourSteps.length) { window.skipNavTour(); return; }
-  navTourShowStep();
-};
-
-window.skipNavTour = function() {
-  navTourClearHighlight();
-  document.getElementById('navTourOverlay').style.display = 'none';
-  document.getElementById('navTourBubble').style.display = 'none';
-  try { localStorage.setItem('pm_seen_nav_tour', '1'); } catch(e){}
-};
-
-document.addEventListener('DOMContentLoaded', function() {
-  let seen = null;
-  try { seen = localStorage.getItem('pm_seen_nav_tour'); } catch(e){}
-  if (!seen) setTimeout(function(){ window.startNavTour(); }, 800);
-});
 
 function showToast(msg) {
   var el = document.getElementById('toastNotif');
@@ -2728,11 +2427,6 @@ function showToast(msg) {
         <button class="btn-gold" style="font-size:12px;padding:6px 14px" onclick="addTemplateExercise()">+ Add Exercise</button>
       </div>
       <div id="templateExList" style="margin-bottom:14px"></div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <label class="form-label" style="margin-bottom:0">Cardio</label>
-        <button class="btn-gold" style="font-size:12px;padding:6px 14px" onclick="addTemplateCardio()">+ Add Cardio</button>
-      </div>
-      <div id="templateCardioList" style="margin-bottom:14px"></div>
       <div style="display:flex;gap:8px;padding-bottom:20px">
         <button class="btn-grey" style="flex:1" onclick="closeCreateTemplate()">Cancel</button>
         <button class="btn-gold" style="flex:2" id="saveTemplateBtn" onclick="saveTemplate()">Save Template</button>
@@ -2769,17 +2463,6 @@ function showToast(msg) {
     <button class="btn-gold" style="width:100%;padding:12px;font-size:14px" onclick="closeTemplatePicker();openCreateTemplate()">+ Create New Template</button>
   </div>
   <div id="templatePickerList" style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 16px;"></div>
-</div>
-
-<!-- NAV TOUR OVERLAY -->
-<div id="navTourOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:800;"></div>
-<div id="navTourBubble" style="display:none;position:fixed;bottom:78px;left:50%;transform:translateX(-50%);width:min(90vw,300px);background:var(--card2);border:1px solid var(--gold);border-radius:12px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.6);z-index:801;">
-  <div id="navTourTitle" style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:4px"></div>
-  <div id="navTourDesc" style="font-size:13px;color:var(--text);line-height:1.4;margin-bottom:12px"></div>
-  <div style="display:flex;justify-content:space-between;align-items:center">
-    <button onclick="skipNavTour()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;padding:6px 0;touch-action:manipulation">Skip</button>
-    <button onclick="navTourNext()" class="btn-gold" id="navTourNextBtn" style="font-size:12px;padding:8px 16px">Next</button>
-  </div>
 </div>
 
 <!-- TOAST NOTIFICATION -->
