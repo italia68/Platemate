@@ -204,20 +204,19 @@
 <div class="loading-overlay" id="loadingOverlay">
   <div style="text-align:center;margin-bottom:24px">
     <div style="font-size:32px;font-weight:700;color:var(--gold);letter-spacing:1px">Platemate</div>
-    <div style="font-size:12px;color:var(--muted);margin-top:4px">v1.1 &mdash; July 2, 2026</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:4px">v1.2 &mdash; July 28, 2026</div>
   </div>
   <div class="spinner"></div>
   <div id="changelogBox" style="display:none;margin-top:20px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 20px;max-width:300px;width:90%;text-align:left">
-    <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:10px">&#127381; What's new in v1.1 &mdash; July 2, 2026</div>
+    <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:10px">&#127381; What's new in v1.2 &mdash; July 28, 2026</div>
     <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:7px">
-      <li style="font-size:12px;color:var(--text)">&#9654; Templates — create, save &amp; reuse workout plans</li>
-      <li style="font-size:12px;color:var(--text)">&#9654; Per-set weight &amp; reps inside templates</li>
-      <li style="font-size:12px;color:var(--text)">&#9654; Load any template straight from the + button</li>
-      <li style="font-size:12px;color:var(--text)">&#9654; Share templates with the community</li>
-      <li style="font-size:12px;color:var(--text)">&#9654; Tap exercise card to edit — no more Edit button</li>
-      <li style="font-size:12px;color:var(--text)">&#9654; Machine picker now full-screen like exercises</li>
-      <li style="font-size:12px;color:var(--text)">&#9654; Forgot password flow on login screen</li>
-      <li style="font-size:12px;color:var(--text)">&#9654; Log workouts from any history day</li>
+      <li style="font-size:12px;color:var(--text)">&#9654; Renamed Community &#8594; Shared Templates</li>
+      <li style="font-size:12px;color:var(--text)">&#9654; Search &amp; muscle-group filters in Shared Templates</li>
+      <li style="font-size:12px;color:var(--text)">&#9654; Like templates you find in Shared Templates</li>
+      <li style="font-size:12px;color:var(--text)">&#9654; Add Cardio activities right inside a template</li>
+      <li style="font-size:12px;color:var(--text)">&#9654; Fixed weight not saving correctly when editing template exercises</li>
+      <li style="font-size:12px;color:var(--text)">&#9654; Templates now show who created them</li>
+      <li style="font-size:12px;color:var(--text)">&#9654; Cleaner spacing on template cards</li>
     </ul>
   </div>
   <div class="loading-text" id="loadingText" style="margin-top:16px">Loading Platemate...</div>
@@ -241,7 +240,7 @@
         </div>
         <div style="display:flex;gap:14px;align-items:flex-start">
           <span style="font-size:22px">&#127760;</span>
-          <div><div style="font-size:13px;font-weight:600;color:var(--text)">Share with the community</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Publish your templates for other Hard Work &amp; Pain athletes</div></div>
+          <div><div style="font-size:13px;font-weight:600;color:var(--text)">Share to Shared Templates</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Publish your templates for other Hard Work &amp; Pain athletes</div></div>
         </div>
       </div>
     </div>
@@ -359,7 +358,7 @@
     <div class="topbar" style="justify-content:space-between">
       <div class="topbar-title">Templates</div>
       <button onclick="switchTemplateView('my')" id="tmplTabMy" style="background:var(--gold);border:none;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;color:#000;cursor:pointer">My Templates</button>
-      <button onclick="switchTemplateView('community')" id="tmplTabCom" style="background:none;border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer">Community</button>
+      <button onclick="switchTemplateView('community')" id="tmplTabCom" style="background:none;border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer">Shared Templates</button>
     </div>
     <div id="tmplCommunityFilters" style="display:none;padding:10px 16px 0 16px">
       <input class="form-input" id="tmplSearchInput" placeholder="Search templates..." autocomplete="off" oninput="onTemplateSearchInput(this.value)" style="margin-bottom:10px" />
@@ -657,7 +656,7 @@ onAuthStateChanged(auth, async (user) => {
     showAuth();
   }
   // Show changelog briefly on the loading screen
-  var CURRENT_VERSION = 'v1.1';
+  var CURRENT_VERSION = 'v1.2';
   var seenVersion = localStorage.getItem('pm_seen_version');
   if (seenVersion !== CURRENT_VERSION) {
     document.getElementById('changelogBox').style.display = 'block';
@@ -2103,7 +2102,7 @@ function renderMyTemplates() {
 function renderCommunityTemplates() {
   const body = document.getElementById('templatesBody');
   if (!communityTemplates.length) {
-    body.innerHTML = '<div style="text-align:center;padding:60px 20px;color:var(--muted)">No community templates yet.<br>Be the first to share one!</div>';
+    body.innerHTML = '<div style="text-align:center;padding:60px 20px;color:var(--muted)">No shared templates yet.<br>Be the first to share one!</div>';
     return;
   }
   const list = filteredCommunityTemplates();
@@ -2442,7 +2441,7 @@ window.toggleShareTemplate = async function(id) {
     try { await deleteDoc(doc(db, 'sharedTemplates', id)); } catch(e){}
   }
   await loadTemplates();
-  alert(nowShared ? 'Template shared with the community!' : 'Template removed from community.');
+  alert(nowShared ? 'Template added to Shared Templates!' : 'Template removed from Shared Templates.');
   window.closeTemplateDetail();
   renderMyTemplates();
 };
