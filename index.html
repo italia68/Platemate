@@ -204,19 +204,17 @@
 <div class="loading-overlay" id="loadingOverlay">
   <div style="text-align:center;margin-bottom:24px">
     <div style="font-size:32px;font-weight:700;color:var(--gold);letter-spacing:1px">Platemate</div>
-    <div style="font-size:12px;color:var(--muted);margin-top:4px">v1.2 &mdash; July 28, 2026</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:4px">v1.3 &mdash; July 29, 2026</div>
   </div>
   <div class="spinner"></div>
   <div id="changelogBox" style="display:none;margin-top:20px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 20px;max-width:300px;width:90%;text-align:left">
-    <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:10px">&#127381; What's new in v1.2 &mdash; July 28, 2026</div>
+    <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:10px">&#127381; What's new in v1.3 &mdash; July 29, 2026</div>
     <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:7px">
-      <li style="font-size:12px;color:var(--text)">&#9654; Renamed Community &#8594; Shared Templates</li>
-      <li style="font-size:12px;color:var(--text)">&#9654; Search &amp; muscle-group filters in Shared Templates</li>
-      <li style="font-size:12px;color:var(--text)">&#9654; Like templates you find in Shared Templates</li>
-      <li style="font-size:12px;color:var(--text)">&#9654; Add Cardio activities right inside a template</li>
-      <li style="font-size:12px;color:var(--text)">&#9654; Fixed weight not saving correctly when editing template exercises</li>
-      <li style="font-size:12px;color:var(--text)">&#9654; Templates now show who created them</li>
-      <li style="font-size:12px;color:var(--text)">&#9654; Cleaner spacing on template cards</li>
+      <li style="font-size:12px;color:var(--text)">&#9654; New: Food tab — track calories, protein, carbs &amp; fat</li>
+      <li style="font-size:12px;color:var(--text)">&#9654; Search foods across Common Foods, USDA &amp; Open Food Facts</li>
+      <li style="font-size:12px;color:var(--text)">&#9654; Set daily calorie &amp; macro goals with progress bars</li>
+      <li style="font-size:12px;color:var(--text)">&#9654; Log food right from the main + button on Today</li>
+      <li style="font-size:12px;color:var(--text)">&#9654; Fixed per-set weights not saving when editing an exercise</li>
     </ul>
   </div>
   <div class="loading-text" id="loadingText" style="margin-top:16px">Loading Platemate...</div>
@@ -322,6 +320,10 @@
         <button onclick="openTemplateFromFab()" style="width:46px;height:46px;border-radius:50%;background:var(--gold);color:#000;border:none;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation">&#128203;</button>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
+        <span style="background:#111;color:#f0f0f0;font-size:13px;padding:6px 12px;border-radius:20px;border:1px solid rgba(255,182,18,0.3)">Food</span>
+        <button onclick="openFoodFromFab()" style="width:46px;height:46px;border-radius:50%;background:var(--gold);color:#000;border:none;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation">&#129367;</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
         <span style="background:#111;color:#f0f0f0;font-size:13px;padding:6px 12px;border-radius:20px;border:1px solid rgba(255,182,18,0.3)">Cardio</span>
         <button onclick="openCardioFromFab()" style="width:46px;height:46px;border-radius:50%;background:var(--gold);color:#000;border:none;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation">&#127939;</button>
       </div>
@@ -341,6 +343,16 @@
     <div class="topbar"><div class="topbar-title">Cardio</div></div>
     <div class="scroll-body" id="cardioBody"></div>
     <button class="fab" onclick="openCardioSheet()">+</button>
+  </div>
+
+  <div id="tabNutrition" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+    <div class="topbar" style="justify-content:space-between">
+      <div class="topbar-title">Food</div>
+      <button onclick="openGoalsSheet()" style="background:var(--gold);border:none;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;color:#000;cursor:pointer">&#9881; Goals</button>
+    </div>
+    <div id="nutritionSummary" style="padding:14px 16px 0"></div>
+    <div class="scroll-body" id="nutritionBody"></div>
+    <button class="fab" onclick="openFoodSheet()">+</button>
   </div>
 
   <div id="tabPr" style="display:none;flex-direction:column;flex:1;overflow:hidden">
@@ -372,6 +384,7 @@
     <button class="nav-btn active" id="navToday"     onclick="switchTab('today')">    <span class="ni">&#127947;</span>Today    </button>
     <button class="nav-btn"        id="navHistory"   onclick="switchTab('history')">  <span class="ni">&#128197;</span>History  </button>
     <button class="nav-btn"        id="navCardio"    onclick="switchTab('cardio')">   <span class="ni">&#127939;</span>Cardio   </button>
+    <button class="nav-btn"        id="navNutrition" onclick="switchTab('nutrition')"><span class="ni">&#129367;</span>Food     </button>
     <button class="nav-btn"        id="navTemplates" onclick="switchTab('templates')"><span class="ni">&#128203;</span>Templates</button>
     <button class="nav-btn"        id="navProfile"   onclick="switchTab('profile')">  <span class="ni">&#128100;</span>Profile  </button>
   </nav>
@@ -558,6 +571,66 @@
   </div>
 </div>
 
+<div class="overlay" id="foodOverlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="foodSheetTitle">Add Food</div>
+    <div class="form-group">
+      <label class="form-label">Search a food (optional)</label>
+      <input class="form-input" id="foodSearchInput" placeholder="e.g. chicken breast, oatmeal..." oninput="onFoodSearchInput(this.value)" autocomplete="off" />
+      <div id="foodSearchResults" style="max-height:220px;overflow-y:auto"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Food name</label>
+      <input class="form-input" id="foodName" placeholder="e.g. Grilled chicken breast" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Amount (grams)</label>
+      <input class="form-input" type="number" id="foodQty" placeholder="100" min="0" step="1" oninput="recalcFoodFromQty()" />
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:14px">
+      <div style="flex:1"><label class="form-label">Calories</label><input class="form-input" type="number" id="foodCals" placeholder="0" min="0" /></div>
+      <div style="flex:1"><label class="form-label">Protein (g)</label><input class="form-input" type="number" id="foodProtein" placeholder="0" min="0" step="0.1" /></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:14px">
+      <div style="flex:1"><label class="form-label">Carbs (g)</label><input class="form-input" type="number" id="foodCarbs" placeholder="0" min="0" step="0.1" /></div>
+      <div style="flex:1"><label class="form-label">Fat (g)</label><input class="form-input" type="number" id="foodFat" placeholder="0" min="0" step="0.1" /></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:14px">
+      <div style="flex:1"><label class="form-label">Fiber (g, optional)</label><input class="form-input" type="number" id="foodFiber" placeholder="0" min="0" step="0.1" /></div>
+      <div style="flex:1"><label class="form-label">Sugar (g, optional)</label><input class="form-input" type="number" id="foodSugar" placeholder="0" min="0" step="0.1" /></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Sodium (mg, optional)</label>
+      <input class="form-input" type="number" id="foodSodium" placeholder="0" min="0" />
+    </div>
+    <div style="display:flex;gap:10px;margin-top:4px">
+      <button class="btn-grey" style="flex:1" onclick="closeFoodSheet()">Cancel</button>
+      <button class="btn-gold" style="flex:2" id="foodSaveBtn" onclick="saveFood()">Save Food</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="goalsOverlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Daily Nutrition Goals</div>
+    <div class="form-group">
+      <label class="form-label">Calories</label>
+      <input class="form-input" type="number" id="goalCals" placeholder="e.g. 2200" min="0" />
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:14px">
+      <div style="flex:1"><label class="form-label">Protein (g)</label><input class="form-input" type="number" id="goalProtein" placeholder="e.g. 160" min="0" /></div>
+      <div style="flex:1"><label class="form-label">Carbs (g)</label><input class="form-input" type="number" id="goalCarbs" placeholder="e.g. 220" min="0" /></div>
+      <div style="flex:1"><label class="form-label">Fat (g)</label><input class="form-input" type="number" id="goalFat" placeholder="e.g. 70" min="0" /></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:4px">
+      <button class="btn-grey" style="flex:1" onclick="closeGoalsSheet()">Cancel</button>
+      <button class="btn-gold" style="flex:2" onclick="saveGoalsSheet()">Save Goals</button>
+    </div>
+  </div>
+</div>
+
 <!-- CARDIO DAY DETAIL -->
 <div class="overlay" id="cardioDayOverlay">
   <div class="sheet">
@@ -629,6 +702,10 @@ const db   = getFirestore(app);
 let currentUser = null;
 let workouts = {};
 let cardioSessions = {};
+let nutritionLog = {};
+let nutritionGoals = null;
+let selectedFoodBase = null;
+let editFoodKey = null, editFoodIdx = null;
 let exType = 'barbell';
 let bbPlates = {45:0, 35:0, 25:0, 10:0, 5:0, 2.5:0};
 let editDayKey = null, editIdx = null;
@@ -656,7 +733,7 @@ onAuthStateChanged(auth, async (user) => {
     showAuth();
   }
   // Show changelog briefly on the loading screen
-  var CURRENT_VERSION = 'v1.2';
+  var CURRENT_VERSION = 'v1.3';
   var seenVersion = localStorage.getItem('pm_seen_version');
   if (seenVersion !== CURRENT_VERSION) {
     document.getElementById('changelogBox').style.display = 'block';
@@ -790,13 +867,37 @@ function uid() { return currentUser.uid; }
 async function loadAllData() {
   workouts = {};
   cardioSessions = {};
+  nutritionLog = {};
   await loadPrs();
   try {
     const wSnap = await getDocs(collection(db, 'users', uid(), 'workouts'));
     wSnap.forEach(d => { workouts[d.id] = d.data().exercises || []; });
     const cSnap = await getDocs(collection(db, 'users', uid(), 'cardio'));
     cSnap.forEach(d => { cardioSessions[d.id] = d.data().sessions || []; });
+    const nSnap = await getDocs(collection(db, 'users', uid(), 'nutrition'));
+    nSnap.forEach(d => { nutritionLog[d.id] = d.data().foods || []; });
+    const gDoc = await getDoc(doc(db, 'users', uid(), 'settings', 'nutritionGoals'));
+    nutritionGoals = gDoc.exists() ? gDoc.data() : null;
   } catch(e) { console.error('Load error', e); }
+}
+
+async function saveNutritionDay(key) {
+  try {
+    await setDoc(doc(db, 'users', uid(), 'nutrition', key), { foods: nutritionLog[key] || [] });
+  } catch(e) { console.error('Save nutrition error', e); }
+}
+
+async function deleteNutritionDay(key) {
+  try {
+    await deleteDoc(doc(db, 'users', uid(), 'nutrition', key));
+  } catch(e) { console.error('Delete nutrition error', e); }
+}
+
+async function saveNutritionGoals(goals) {
+  try {
+    await setDoc(doc(db, 'users', uid(), 'settings', 'nutritionGoals'), goals);
+    nutritionGoals = goals;
+  } catch(e) { console.error('Save goals error', e); }
 }
 
 async function saveWorkoutDay(key) {
@@ -828,16 +929,18 @@ window.switchTab = function(tab) {
   document.getElementById('tabToday').style.display     = tab==='today'     ? 'flex' : 'none';
   document.getElementById('tabHistory').style.display   = tab==='history'   ? 'flex' : 'none';
   document.getElementById('tabCardio').style.display    = tab==='cardio'    ? 'flex' : 'none';
+  document.getElementById('tabNutrition').style.display = tab==='nutrition' ? 'flex' : 'none';
   document.getElementById('tabPr') && (document.getElementById('tabPr').style.display = tab==='pr' ? 'flex' : 'none');
   document.getElementById('tabTemplates').style.display = tab==='templates' ? 'flex' : 'none';
   document.getElementById('tabProfile').style.display   = tab==='profile'   ? 'flex' : 'none';
-  ['today','history','cardio','templates','profile'].forEach(t => {
+  ['today','history','cardio','nutrition','templates','profile'].forEach(t => {
     var el = document.getElementById('nav'+t[0].toUpperCase()+t.slice(1));
     if(el) el.classList.toggle('active', t===tab);
   });
   if (tab==='history')   renderHistory();
   if (tab==='profile')   renderProfile();
   if (tab==='cardio')    renderCardioToday();
+  if (tab==='nutrition') renderNutritionToday();
   if (tab==='pr')        renderPrTab && renderPrTab();
   if (tab==='templates') renderTemplates();
 };
@@ -1119,7 +1222,7 @@ window.saveExercise = async function() {
   else if (exType==='dumbbell') weight=parseFloat(document.getElementById('dbWeight').value)||0;
   else if (exType==='machine'){weight=parseFloat(document.getElementById('machWeight').value)||0;machineName=document.getElementById('machineName').value.trim();}
   else {weight=parseFloat(document.getElementById('miscWeight').value)||0;miscDesc=document.getElementById('miscDesc').value.trim();}
-  const entry={name,type:exType,weight,sets,reps,notes,unit,machineName,miscDesc};
+  const entry={name,type:exType,weight,sets,reps,notes,unit,machineName,miscDesc,setWeights};
   if (templateExMode) {
     var setData = repsArr.map(function(r,i){ return { reps: r, weight: wtsArr[i]||weight||0 }; });
     var tEntry = { name, type:exType, weight, sets, reps: repsArr, setData, notes, unit, machineName, miscDesc };
@@ -1265,6 +1368,340 @@ function renderCardioToday() {
     :'<div class="empty-state"><div class="empty-icon">&#127939;</div>No cardio logged today.<br>Tap <strong style="color:var(--gold)">+</strong> to add a session!</div>';
 }
 
+// ── NUTRITION ─────────────────────────────────────────────────────────────────
+function escapeHtml(s) {
+  return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function foodCardHTML(f,i,dayKey) {
+  const macros = `${f.protein||0}g P &nbsp;|&nbsp; ${f.carbs||0}g C &nbsp;|&nbsp; ${f.fat||0}g F`;
+  return `<div class="ex-card">
+    <div class="ex-header">
+      <div><div class="ex-name">${escapeHtml(f.name)}</div><span class="ex-type">${f.qty||0} g</span></div>
+      <div class="ex-actions">
+        <button class="edit-btn" onclick="editFood('${dayKey}',${i})">Edit</button>
+        <button class="delete-btn" onclick="delFood('${dayKey}',${i})">&#215;</button>
+      </div>
+    </div>
+    <div class="ex-stats">
+      <div class="ex-stat"><span class="ex-stat-label">Calories</span><span class="ex-stat-val">${f.cals||0}</span></div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);padding:0 14px 12px">${macros}</div>
+  </div>`;
+}
+
+function nutritionTotals(key) {
+  const foods = nutritionLog[key] || [];
+  return foods.reduce((t,f) => ({
+    cals: t.cals + (f.cals||0), protein: t.protein + (f.protein||0),
+    carbs: t.carbs + (f.carbs||0), fat: t.fat + (f.fat||0)
+  }), {cals:0,protein:0,carbs:0,fat:0});
+}
+
+function macroBarHTML(label, val, goal, color) {
+  const pct = goal ? Math.min(100, Math.round(val/goal*100)) : 0;
+  return `<div style="margin-bottom:8px">
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:3px">
+      <span>${label}</span><span>${Math.round(val)}${goal ? ' / '+goal+'g' : 'g'}</span>
+    </div>
+    <div style="background:var(--border);border-radius:6px;height:6px;overflow:hidden">
+      <div style="background:${color};height:100%;width:${goal?pct:Math.min(100,val>0?100:0)}%"></div>
+    </div>
+  </div>`;
+}
+
+function renderNutritionToday() {
+  const key = todayKey();
+  const foods = nutritionLog[key] || [];
+  const totals = nutritionTotals(key);
+  const g = nutritionGoals;
+  const summaryEl = document.getElementById('nutritionSummary');
+  const calPct = g && g.calories ? Math.min(100, Math.round(totals.cals/g.calories*100)) : 0;
+  summaryEl.innerHTML = `
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+        <span style="font-size:13px;color:var(--muted)">Calories</span>
+        <span style="font-size:20px;font-weight:700;color:var(--gold)">${Math.round(totals.cals)}${g && g.calories ? ' <span style="font-size:13px;color:var(--muted);font-weight:400">/ '+g.calories+'</span>' : ''}</span>
+      </div>
+      ${g && g.calories ? `<div style="background:var(--border);border-radius:6px;height:8px;overflow:hidden;margin-bottom:14px"><div style="background:var(--gold);height:100%;width:${calPct}%"></div></div>` : '<div style="margin-bottom:14px"></div>'}
+      ${macroBarHTML('Protein', totals.protein, g && g.protein, '#4fc3f7')}
+      ${macroBarHTML('Carbs', totals.carbs, g && g.carbs, '#81c784')}
+      ${macroBarHTML('Fat', totals.fat, g && g.fat, '#ffb74d')}
+      ${!g ? '<div style="font-size:11px;color:var(--muted);margin-top:6px">Tap &#9881; Goals above to set daily targets.</div>' : ''}
+    </div>`;
+  const body = document.getElementById('nutritionBody');
+  body.innerHTML = foods.length
+    ? foods.map((f,i)=>foodCardHTML(f,i,key)).join('')
+    : '<div class="empty-state"><div class="empty-icon">&#129367;</div>No food logged today.<br>Tap <strong style="color:var(--gold)">+</strong> to add something!</div>';
+}
+
+window.openGoalsSheet = function() {
+  const g = nutritionGoals || {};
+  document.getElementById('goalCals').value = g.calories || '';
+  document.getElementById('goalProtein').value = g.protein || '';
+  document.getElementById('goalCarbs').value = g.carbs || '';
+  document.getElementById('goalFat').value = g.fat || '';
+  document.getElementById('goalsOverlay').style.display = 'flex';
+};
+window.closeGoalsSheet = function() { document.getElementById('goalsOverlay').style.display = 'none'; };
+window.saveGoalsSheet = async function() {
+  const goals = {
+    calories: parseInt(document.getElementById('goalCals').value)||0,
+    protein: parseInt(document.getElementById('goalProtein').value)||0,
+    carbs: parseInt(document.getElementById('goalCarbs').value)||0,
+    fat: parseInt(document.getElementById('goalFat').value)||0
+  };
+  await saveNutritionGoals(goals);
+  window.closeGoalsSheet();
+  renderNutritionToday();
+};
+document.getElementById('goalsOverlay').addEventListener('click', e => { if(e.target===document.getElementById('goalsOverlay')) window.closeGoalsSheet(); });
+
+function resetFoodSheetFields() {
+  ['foodName','foodQty','foodCals','foodProtein','foodCarbs','foodFat','foodFiber','foodSugar','foodSodium','foodSearchInput'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('foodSearchResults').innerHTML = '';
+  selectedFoodBase = null;
+}
+
+window.openFoodSheet = function() {
+  editFoodKey = null; editFoodIdx = null;
+  resetFoodSheetFields();
+  document.getElementById('foodSheetTitle').textContent = 'Add Food';
+  document.getElementById('foodSaveBtn').textContent = 'Save Food';
+  document.getElementById('foodOverlay').style.display = 'flex';
+};
+window.closeFoodSheet = function() { document.getElementById('foodOverlay').style.display = 'none'; };
+document.getElementById('foodOverlay').addEventListener('click', e => { if(e.target===document.getElementById('foodOverlay')) window.closeFoodSheet(); });
+
+window.editFood = function(dayKey, idx) {
+  const f = nutritionLog[dayKey][idx];
+  editFoodKey = dayKey; editFoodIdx = idx;
+  resetFoodSheetFields();
+  document.getElementById('foodSheetTitle').textContent = 'Edit Food';
+  document.getElementById('foodSaveBtn').textContent = 'Update Food';
+  document.getElementById('foodName').value = f.name;
+  document.getElementById('foodQty').value = f.qty || '';
+  document.getElementById('foodCals').value = f.cals || '';
+  document.getElementById('foodProtein').value = f.protein || '';
+  document.getElementById('foodCarbs').value = f.carbs || '';
+  document.getElementById('foodFat').value = f.fat || '';
+  document.getElementById('foodFiber').value = f.fiber || '';
+  document.getElementById('foodSugar').value = f.sugar || '';
+  document.getElementById('foodSodium').value = f.sodium || '';
+  document.getElementById('foodOverlay').style.display = 'flex';
+};
+
+window.delFood = async function(dayKey, idx) {
+  if (!confirm('Delete this food entry?')) return;
+  nutritionLog[dayKey].splice(idx,1);
+  if (!nutritionLog[dayKey].length) {
+    delete nutritionLog[dayKey];
+    await deleteNutritionDay(dayKey);
+  } else {
+    await saveNutritionDay(dayKey);
+  }
+  if (dayKey===todayKey()) renderNutritionToday();
+};
+
+window.saveFood = async function() {
+  const name = document.getElementById('foodName').value.trim();
+  const qty = parseFloat(document.getElementById('foodQty').value) || 0;
+  const cals = parseInt(document.getElementById('foodCals').value) || 0;
+  const protein = parseFloat(document.getElementById('foodProtein').value) || 0;
+  const carbs = parseFloat(document.getElementById('foodCarbs').value) || 0;
+  const fat = parseFloat(document.getElementById('foodFat').value) || 0;
+  const fiber = parseFloat(document.getElementById('foodFiber').value) || 0;
+  const sugar = parseFloat(document.getElementById('foodSugar').value) || 0;
+  const sodium = parseInt(document.getElementById('foodSodium').value) || 0;
+  if (!name) { alert('Please enter a food name.'); return; }
+  if (!cals && !protein && !carbs && !fat) { alert('Please enter calories or macros.'); return; }
+  const entry = { name, qty, cals, protein, carbs, fat, fiber, sugar, sodium, ts: Date.now() };
+  const key = todayKey();
+  if (editFoodKey !== null && editFoodIdx !== null) {
+    entry.ts = nutritionLog[editFoodKey][editFoodIdx].ts;
+    nutritionLog[editFoodKey][editFoodIdx] = entry;
+    const dk = editFoodKey; editFoodKey = null; editFoodIdx = null;
+    await saveNutritionDay(dk);
+    window.closeFoodSheet();
+    if (dk===todayKey()) renderNutritionToday();
+  } else {
+    if (!nutritionLog[key]) nutritionLog[key] = [];
+    nutritionLog[key].push(entry);
+    await saveNutritionDay(key);
+    window.closeFoodSheet();
+    renderNutritionToday();
+  }
+};
+
+function recalcFoodFromQty() {
+  if (!selectedFoodBase) return;
+  const qty = parseFloat(document.getElementById('foodQty').value) || 0;
+  const factor = qty / 100;
+  document.getElementById('foodCals').value = Math.round(selectedFoodBase.cals100 * factor);
+  document.getElementById('foodProtein').value = +(selectedFoodBase.protein100 * factor).toFixed(1);
+  document.getElementById('foodCarbs').value = +(selectedFoodBase.carbs100 * factor).toFixed(1);
+  document.getElementById('foodFat').value = +(selectedFoodBase.fat100 * factor).toFixed(1);
+  document.getElementById('foodFiber').value = +(selectedFoodBase.fiber100 * factor).toFixed(1);
+  document.getElementById('foodSugar').value = +(selectedFoodBase.sugar100 * factor).toFixed(1);
+  document.getElementById('foodSodium').value = Math.round(selectedFoodBase.sodium100 * factor);
+}
+
+function searchLocalFoods(query) {
+  const q = query.toLowerCase();
+  return FOOD_DATA.filter(f => f.n.toLowerCase().includes(q)).slice(0, 8);
+}
+
+// USDA FoodData Central — free public API from the US government.
+// Uses DEMO_KEY by default (rate-limited: ~30 req/hr, 50/day per IP).
+// Get your own free key at https://fdc.nal.usda.gov/api-key-signup and paste it below
+// for higher limits — everything else works the same either way.
+const USDA_API_KEY = 'DEMO_KEY';
+
+function fdcNutrient(nutrients, name) {
+  const n = (nutrients||[]).find(x => x.nutrientName === name);
+  return n ? (n.value||0) : 0;
+}
+
+function renderFoodSearchResults(localList, usdaList, onlineList, loadingRemote) {
+  const el = document.getElementById('foodSearchResults');
+  let html = '';
+  if (localList.length) {
+    html += '<div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin:6px 0 2px">Common Foods</div>';
+    html += localList.map((f,i) =>
+      '<div class="food-local-row" data-idx="'+i+'" style="padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer">' +
+        '<div style="font-size:13px;color:var(--text);font-weight:600">' + escapeHtml(f.n) + '</div>' +
+        '<div style="font-size:11px;color:var(--muted)">' + f.cals + ' kcal / 100g</div>' +
+      '</div>'
+    ).join('');
+  }
+  if (loadingRemote) {
+    html += '<div style="color:var(--muted);font-size:12px;padding:8px 0">Searching USDA &amp; online databases...</div>';
+  } else {
+    if (usdaList && usdaList.length) {
+      html += '<div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin:6px 0 2px">USDA Database</div>';
+      html += usdaList.map((f,i) => {
+        const cals = Math.round(fdcNutrient(f.foodNutrients,'Energy'));
+        return '<div class="food-usda-row" data-idx="'+i+'" style="padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer">' +
+          '<div style="font-size:13px;color:var(--text);font-weight:600">' + escapeHtml(f.description) + '</div>' +
+          '<div style="font-size:11px;color:var(--muted)">' + (f.brandOwner ? escapeHtml(f.brandOwner) + ' &middot; ' : '') + cals + ' kcal / 100g</div>' +
+        '</div>';
+      }).join('');
+    }
+    if (onlineList && onlineList.length) {
+      html += '<div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin:6px 0 2px">Packaged Foods (Open Food Facts)</div>';
+      html += onlineList.map((p,i) => {
+        const cals = Math.round(p.nutriments['energy-kcal_100g']||0);
+        return '<div class="food-result-row" data-idx="'+i+'" style="padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer">' +
+          '<div style="font-size:13px;color:var(--text);font-weight:600">' + escapeHtml(p.product_name) + '</div>' +
+          '<div style="font-size:11px;color:var(--muted)">' + (p.brands ? escapeHtml(p.brands.split(',')[0]) + ' &middot; ' : '') + cals + ' kcal / 100g</div>' +
+        '</div>';
+      }).join('');
+    }
+    if (!localList.length && !(usdaList&&usdaList.length) && !(onlineList&&onlineList.length)) {
+      html += '<div style="color:var(--muted);font-size:12px;padding:8px 0">No results — try Manual entry below.</div>';
+    }
+  }
+  el.innerHTML = html;
+  window._foodSearchCacheLocal = localList;
+  window._foodSearchCacheUsda = usdaList || [];
+  window._foodSearchCacheOnline = onlineList || [];
+}
+
+let foodSearchTimer = null;
+window.onFoodSearchInput = function(q) {
+  clearTimeout(foodSearchTimer);
+  const query = q.trim();
+  if (query.length < 2) { document.getElementById('foodSearchResults').innerHTML = ''; return; }
+  const local = searchLocalFoods(query);
+  renderFoodSearchResults(local, [], [], true);
+  foodSearchTimer = setTimeout(() => runFoodSearch(query, local), 400);
+};
+
+async function fetchUsda(query) {
+  try {
+    const url = 'https://api.nal.usda.gov/fdc/v1/foods/search?api_key=' + USDA_API_KEY +
+      '&query=' + encodeURIComponent(query) + '&pageSize=10&dataType=Foundation,SR%20Legacy,Branded';
+    const res = await fetch(url);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return (data.foods||[]).filter(f => f.description && f.foodNutrients && f.foodNutrients.length);
+  } catch(e) { return []; }
+}
+
+async function fetchOff(query) {
+  try {
+    const url = 'https://world.openfoodfacts.org/cgi/search.pl?search_terms=' + encodeURIComponent(query) + '&search_simple=1&action=process&json=1&page_size=15&fields=product_name,brands,nutriments';
+    const res = await fetch(url);
+    const data = await res.json();
+    return (data.products||[]).filter(p => p.product_name && p.nutriments && p.nutriments['energy-kcal_100g'] != null);
+  } catch(e) { return []; }
+}
+
+async function runFoodSearch(query, localList) {
+  const [usdaResults, offResults] = await Promise.all([fetchUsda(query), fetchOff(query)]);
+  renderFoodSearchResults(localList, usdaResults, offResults, false);
+}
+
+function selectLocalFood(f) {
+  selectedFoodBase = {
+    cals100: f.cals, protein100: f.p, carbs100: f.c, fat100: f.f,
+    fiber100: f.fi||0, sugar100: f.su||0, sodium100: f.na||0
+  };
+  document.getElementById('foodName').value = f.n;
+  document.getElementById('foodQty').value = 100;
+  document.getElementById('foodSearchResults').innerHTML = '';
+  document.getElementById('foodSearchInput').value = '';
+  recalcFoodFromQty();
+}
+
+function selectUsdaFood(f) {
+  const n = f.foodNutrients || [];
+  selectedFoodBase = {
+    cals100: fdcNutrient(n,'Energy'),
+    protein100: fdcNutrient(n,'Protein'),
+    carbs100: fdcNutrient(n,'Carbohydrate, by difference'),
+    fat100: fdcNutrient(n,'Total lipid (fat)'),
+    fiber100: fdcNutrient(n,'Fiber, total dietary'),
+    sugar100: fdcNutrient(n,'Sugars, total including NLEA') || fdcNutrient(n,'Sugars, total'),
+    sodium100: fdcNutrient(n,'Sodium, Na')
+  };
+  document.getElementById('foodName').value = f.description + (f.brandOwner ? ' (' + f.brandOwner + ')' : '');
+  document.getElementById('foodQty').value = 100;
+  document.getElementById('foodSearchResults').innerHTML = '';
+  document.getElementById('foodSearchInput').value = '';
+  recalcFoodFromQty();
+}
+
+function selectSearchedFood(p) {
+  const n = p.nutriments || {};
+  selectedFoodBase = {
+    cals100: n['energy-kcal_100g']||0,
+    protein100: n['proteins_100g']||0,
+    carbs100: n['carbohydrates_100g']||0,
+    fat100: n['fat_100g']||0,
+    fiber100: n['fiber_100g']||0,
+    sugar100: n['sugars_100g']||0,
+    sodium100: (n['sodium_100g']||0)*1000
+  };
+  document.getElementById('foodName').value = p.product_name + (p.brands ? ' (' + p.brands.split(',')[0] + ')' : '');
+  document.getElementById('foodQty').value = 100;
+  document.getElementById('foodSearchResults').innerHTML = '';
+  document.getElementById('foodSearchInput').value = '';
+  recalcFoodFromQty();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var el = document.getElementById('foodSearchResults');
+  if (el) el.addEventListener('click', function(e) {
+    var localRow = e.target.closest('.food-local-row');
+    if (localRow) { var f = (window._foodSearchCacheLocal||[])[parseInt(localRow.dataset.idx)]; if (f) selectLocalFood(f); return; }
+    var usdaRow = e.target.closest('.food-usda-row');
+    if (usdaRow) { var u = (window._foodSearchCacheUsda||[])[parseInt(usdaRow.dataset.idx)]; if (u) selectUsdaFood(u); return; }
+    var row = e.target.closest('.food-result-row');
+    if (row) { var p = (window._foodSearchCacheOnline||[])[parseInt(row.dataset.idx)]; if (p) selectSearchedFood(p); }
+  });
+});
+
 // ── PROFILE ───────────────────────────────────────────────────────────────────
 function renderProfile() {
   const days=Object.keys(workouts);
@@ -1321,6 +1758,12 @@ window.openCardioFromFab = function() {
   document.getElementById('todayFabMenu').style.display = 'none';
   document.getElementById('todayFab').textContent = '+';
   window.openCardioSheet();
+};
+window.openFoodFromFab = function() {
+  fabOpen = false;
+  document.getElementById('todayFabMenu').style.display = 'none';
+  document.getElementById('todayFab').textContent = '+';
+  window.openFoodSheet();
 };
 window.openTemplateFromFab = function() {
   fabOpen = false;
@@ -1483,6 +1926,66 @@ if('serviceWorker' in navigator){
 
 
 // ── EXERCISE PICKER ───────────────────────────────────────────────────────────
+// ── FOOD LIBRARY (per 100g) ────────────────────────────────────────────────────
+const FOOD_DATA = [
+  {n:"Chicken Breast (cooked)",cals:165,p:31,c:0,f:3.6,fi:0,su:0,na:74},
+  {n:"Chicken Thigh (cooked)",cals:209,p:26,c:0,f:10.9,fi:0,su:0,na:90},
+  {n:"Ground Beef 80/20 (cooked)",cals:254,p:26,c:0,f:17,fi:0,su:0,na:75},
+  {n:"Ground Beef 90/10 (cooked)",cals:176,p:26,c:0,f:8,fi:0,su:0,na:75},
+  {n:"Ground Turkey (cooked)",cals:203,p:27,c:0,f:11,fi:0,su:0,na:88},
+  {n:"Turkey Breast (cooked)",cals:135,p:30,c:0,f:1,fi:0,su:0,na:63},
+  {n:"Salmon (cooked)",cals:208,p:20,c:0,f:13,fi:0,su:0,na:59},
+  {n:"Tuna, canned in water",cals:116,p:26,c:0,f:1,fi:0,su:0,na:247},
+  {n:"Tilapia (cooked)",cals:129,p:26,c:0,f:2.7,fi:0,su:0,na:56},
+  {n:"Shrimp (cooked)",cals:99,p:24,c:0.2,f:0.3,fi:0,su:0,na:111},
+  {n:"Pork Chop (cooked)",cals:231,p:26,c:0,f:14,fi:0,su:0,na:57},
+  {n:"Bacon (cooked)",cals:541,p:37,c:1.4,f:42,fi:0,su:0,na:1717},
+  {n:"Egg, whole (cooked)",cals:155,p:13,c:1.1,f:11,fi:0,su:1.1,na:124},
+  {n:"Egg Whites",cals:52,p:11,c:0.7,f:0.2,fi:0,su:0.7,na:166},
+  {n:"Tofu, firm",cals:144,p:15.8,c:2.8,f:8.7,fi:2.3,su:0.6,na:12},
+  {n:"Greek Yogurt, plain nonfat",cals:59,p:10,c:3.6,f:0.4,fi:0,su:3.6,na:36},
+  {n:"Cottage Cheese, low-fat",cals:81,p:11,c:3.4,f:2.3,fi:0,su:2.7,na:364},
+  {n:"Whey Protein Powder",cals:400,p:80,c:8,f:5,fi:0,su:4,na:150},
+  {n:"White Rice, cooked",cals:130,p:2.7,c:28,f:0.3,fi:0.4,su:0.1,na:1},
+  {n:"Brown Rice, cooked",cals:123,p:2.7,c:26,f:1,fi:1.6,su:0.2,na:4},
+  {n:"Oats, dry",cals:389,p:17,c:66,f:7,fi:10.6,su:0,na:2},
+  {n:"Quinoa, cooked",cals:120,p:4.4,c:21.3,f:1.9,fi:2.8,su:0.9,na:7},
+  {n:"Whole Wheat Bread",cals:247,p:13,c:41,f:3.4,fi:6,su:5.6,na:400},
+  {n:"White Bread",cals:265,p:9,c:49,f:3.2,fi:2.7,su:5.7,na:490},
+  {n:"Pasta, cooked",cals:158,p:5.8,c:31,f:0.9,fi:1.8,su:0.6,na:1},
+  {n:"Sweet Potato, cooked",cals:90,p:2,c:20.7,f:0.2,fi:3.3,su:6.5,na:36},
+  {n:"Potato, baked (with skin)",cals:93,p:2.5,c:21.2,f:0.1,fi:2.2,su:1.2,na:10},
+  {n:"Tortilla, flour",cals:312,p:8.2,c:51,f:8.1,fi:2.9,su:2,na:648},
+  {n:"Banana",cals:89,p:1.1,c:22.8,f:0.3,fi:2.6,su:12.2,na:1},
+  {n:"Apple",cals:52,p:0.3,c:13.8,f:0.2,fi:2.4,su:10.4,na:1},
+  {n:"Orange",cals:47,p:0.9,c:11.8,f:0.1,fi:2.4,su:9.4,na:0},
+  {n:"Strawberries",cals:32,p:0.7,c:7.7,f:0.3,fi:2,su:4.9,na:1},
+  {n:"Blueberries",cals:57,p:0.7,c:14.5,f:0.3,fi:2.4,su:10,na:1},
+  {n:"Grapes",cals:69,p:0.7,c:18.1,f:0.2,fi:0.9,su:15.5,na:2},
+  {n:"Watermelon",cals:30,p:0.6,c:7.6,f:0.2,fi:0.4,su:6.2,na:1},
+  {n:"Avocado",cals:160,p:2,c:8.5,f:14.7,fi:6.7,su:0.7,na:7},
+  {n:"Broccoli, cooked",cals:35,p:2.4,c:7.2,f:0.4,fi:3.3,su:1.4,na:41},
+  {n:"Spinach, raw",cals:23,p:2.9,c:3.6,f:0.4,fi:2.2,su:0.4,na:79},
+  {n:"Carrots, raw",cals:41,p:0.9,c:9.6,f:0.2,fi:2.8,su:4.7,na:69},
+  {n:"Green Beans, cooked",cals:35,p:1.8,c:7.9,f:0.2,fi:3.2,su:1.4,na:6},
+  {n:"Asparagus, cooked",cals:22,p:2.4,c:4.1,f:0.2,fi:2,su:1.3,na:14},
+  {n:"Bell Pepper, raw",cals:31,p:1,c:6,f:0.3,fi:2.1,su:4.2,na:4},
+  {n:"Tomato, raw",cals:18,p:0.9,c:3.9,f:0.2,fi:1.2,su:2.6,na:5},
+  {n:"Cucumber, raw",cals:15,p:0.7,c:3.6,f:0.1,fi:0.5,su:1.7,na:2},
+  {n:"Lettuce, raw",cals:15,p:1.4,c:2.9,f:0.2,fi:1.3,su:0.8,na:28},
+  {n:"Milk, whole",cals:61,p:3.2,c:4.8,f:3.3,fi:0,su:5.1,na:43},
+  {n:"Milk, skim",cals:34,p:3.4,c:5,f:0.1,fi:0,su:5,na:42},
+  {n:"Cheddar Cheese",cals:403,p:25,c:1.3,f:33,fi:0,su:0.5,na:621},
+  {n:"Mozzarella Cheese",cals:280,p:28,c:3.1,f:17,fi:0,su:1.2,na:627},
+  {n:"Butter",cals:717,p:0.9,c:0.1,f:81.1,fi:0,su:0.1,na:11},
+  {n:"Olive Oil",cals:884,p:0,c:0,f:100,fi:0,su:0,na:2},
+  {n:"Peanut Butter",cals:588,p:25,c:20,f:50,fi:6,su:9,na:429},
+  {n:"Almonds",cals:579,p:21,c:22,f:50,fi:12.5,su:4.4,na:1},
+  {n:"Walnuts",cals:654,p:15,c:14,f:65,fi:6.7,su:2.6,na:2},
+  {n:"Protein Bar (generic)",cals:370,p:30,c:35,f:12,fi:5,su:15,na:250},
+  {n:"Granola Bar (generic)",cals:471,p:8,c:64,f:20,fi:5,su:29,na:270}
+];
+
 const EX_DATA = [
   {n:"Ab Wheel",c:"Core"},{n:"Aerobics",c:"Cardio"},{n:"Arnold Press (Dumbbell)",c:"Shoulders"},
   {n:"Around the World",c:"Chest"},{n:"Back Extension",c:"Back"},{n:"Back Extension (Machine)",c:"Back"},
