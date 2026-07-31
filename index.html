@@ -329,6 +329,10 @@
         <button onclick="openCardioFromFab()" style="width:46px;height:46px;border-radius:50%;background:var(--gold);color:#000;border:none;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation">&#127939;</button>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
+        <span style="background:#111;color:#f0f0f0;font-size:13px;padding:6px 12px;border-radius:20px;border:1px solid rgba(255,182,18,0.3)">Classes</span>
+        <button onclick="openClassesFromFab()" style="width:46px;height:46px;border-radius:50%;background:var(--gold);color:#000;border:none;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation">&#128131;</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
         <span style="background:#111;color:#f0f0f0;font-size:13px;padding:6px 12px;border-radius:20px;border:1px solid rgba(255,182,18,0.3)">Lifting</span>
         <button onclick="openLiftingFromFab()" style="width:46px;height:46px;border-radius:50%;background:var(--gold);color:#000;border:none;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation">&#127947;</button>
       </div>
@@ -1812,6 +1816,15 @@ window.openCardioFromFab = function() {
   document.getElementById('todayFab').textContent = '+';
   window.openCardioSheet();
 };
+window.openClassesFromFab = function() {
+  fabOpen = false;
+  document.getElementById('todayFabMenu').style.display = 'none';
+  document.getElementById('todayFab').textContent = '+';
+  window.openCardioSheet();
+  document.getElementById('cardioSheetTitle').textContent = 'Add Class';
+  document.getElementById('cardioSaveBtn').textContent = 'Save Class';
+  window.openCardioPicker(false, true);
+};
 window.openFoodFromFab = function() {
   fabOpen = false;
   document.getElementById('todayFabMenu').style.display = 'none';
@@ -2466,7 +2479,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 // ── CARDIO PICKER ─────────────────────────────────────────────────────────────
-const CARDIO_ACTIVITIES = ["Aerobics", "Battle Ropes", "Boxing", "Climbing", "Cycling", "Cycling (Indoor)", "Cycling (Outdoor)", "Elliptical Machine", "Hiking", "HIIT", "Jump Rope", "Rowing (Machine)", "Running", "Running (Outdoor)", "Running (Treadmill)", "Skating", "Skiing", "Snowboarding", "Stair Climber", "Stationary Bike", "Swimming", "Walking", "Yoga"];
+const LES_MILLS_CLASSES = [
+  // Strength & Conditioning
+  "BodyPump", "BodyPump Heavy", "Strength Development", "Functional Strength",
+  // Cardio & HIIT
+  "BodyAttack", "BodyCombat", "BodyStep", "Grit", "Sprint", "Tone", "Boxing Boot Camp",
+  // Mind & Body
+  "BodyBalance", "Yoga", "Pilates",
+  // Cycle
+  "RPM", "The Trip",
+  // Sculpt, Dance & Circuit
+  "Core", "Shapes", "Reformer", "BodyJam", "Dance", "Ceremony HYROX", "Thrive", "Born to Move", "TRX"
+];
+const CARDIO_ACTIVITIES = ["Aerobics", "Battle Ropes", "Boxing", "Climbing", "Cycling", "Cycling (Indoor)", "Cycling (Outdoor)", "Elliptical Machine", "Hiking", "HIIT", "Jump Rope", "Rowing (Machine)", "Running", "Running (Outdoor)", "Running (Treadmill)", "Skating", "Skiing", "Snowboarding", "Stair Climber", "Stationary Bike", "Swimming", "Walking", "Yoga"].concat(LES_MILLS_CLASSES);
+let cardioPickerClassesOnly = false;
 
 function setCardioTypeDisplay(name) {
   if (tmplCardioPickerMode) {
@@ -2482,7 +2508,8 @@ function setCardioTypeDisplay(name) {
 
 function renderCardioPickerList() {
   var q = document.getElementById('cardioPickerSearch').value.trim().toLowerCase();
-  var filtered = q ? CARDIO_ACTIVITIES.filter(function(a){ return a.toLowerCase().includes(q); }) : CARDIO_ACTIVITIES;
+  var base = cardioPickerClassesOnly ? LES_MILLS_CLASSES : CARDIO_ACTIVITIES;
+  var filtered = q ? base.filter(function(a){ return a.toLowerCase().includes(q); }) : base;
   if (!filtered.length) {
     document.getElementById('cardioPickerList').innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted)">No activities found</div>';
     return;
@@ -2508,8 +2535,9 @@ function renderCardioPickerList() {
   document.getElementById('cardioPickerList').innerHTML = html;
 }
 
-window.openCardioPicker = function(forTemplate) {
+window.openCardioPicker = function(forTemplate, classesOnly) {
   tmplCardioPickerMode = !!forTemplate;
+  cardioPickerClassesOnly = !!classesOnly;
   document.getElementById('cardioPickerOverlay').style.display = 'flex';
   document.getElementById('cardioPickerSearch').value = '';
   renderCardioPickerList();
