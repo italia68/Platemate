@@ -10,6 +10,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Platemate">
   <meta name="theme-color" content="#FFB612">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    emailjs.init("MpgA3nq5ojZC0hCJY");
+  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -852,6 +856,10 @@ window.doAuth = async function() {
       if (!name) { errEl.textContent = 'Please enter your name.'; btn.disabled=false; return; }
       const cred = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(cred.user, { displayName: name });
+      emailjs.send("service_aaewkyu", "template_bluekgg", {
+        new_user_email: cred.user.email,
+        signup_time: new Date().toLocaleString()
+      }).catch((err) => console.error("EmailJS error:", err));
     } else {
       await signInWithEmailAndPassword(auth, email, password);
     }
