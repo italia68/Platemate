@@ -858,7 +858,9 @@ window.doAuth = async function() {
       await updateProfile(cred.user, { displayName: name });
       emailjs.send("service_st0d6i9", "template_bluekgg", {
         new_user_email: cred.user.email,
-        signup_time: new Date().toLocaleString()
+        signup_time: new Date().toLocaleString(),
+        new_user_name: name,
+        new_user_uid: cred.user.uid
       }).catch((err) => console.error("EmailJS error:", err));
     } else {
       await signInWithEmailAndPassword(auth, email, password);
