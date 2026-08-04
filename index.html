@@ -1351,9 +1351,20 @@ window.openDayDetail = function(key) {
 };
 function renderDayBody(key) {
   const exs=workouts[key]||[];
-  document.getElementById('dayBody').innerHTML=exs.length
-    ?exs.map((ex,i)=>exCardHTML(ex,i,key)).join('')
-    :'<div class="empty-state">No exercises.</div>';
+  const cardios=cardioSessions[key]||[];
+  const el=document.getElementById('dayBody');
+  if (!exs.length && !cardios.length) { el.innerHTML='<div class="empty-state">No exercises.</div>'; return; }
+  let html = '';
+  if (exs.length) {
+    html += '<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;font-weight:600">&#127947; Lifting</div>';
+    html += exs.map((ex,i) => exCardHTML(ex,i,key)).join('');
+  }
+  if (cardios.length) {
+    if (exs.length) html += '<div style="height:8px"></div>';
+    html += '<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;font-weight:600">&#127939; Cardio</div>';
+    html += cardios.map((s,i) => cardioCardHTML(s,i,key)).join('');
+  }
+  el.innerHTML = html;
 }
 
 // ── CARDIO ────────────────────────────────────────────────────────────────────
@@ -1418,15 +1429,18 @@ window.saveCardio = async function() {
     window.closeCardioSheet();
     renderCardioToday();
     renderToday();
+    if (chosenCardioKey === todayKey()) { activeDayKey = null; }
+    else { openDayDetail(chosenCardioKey); }
   } else {
     const key=chosenCardioKey;
     if(!cardioSessions[key])cardioSessions[key]=[];
     cardioSessions[key].push(entry);
     await saveCardioDay(key);
-    activeDayKey = null;
     window.closeCardioSheet();
     renderCardioToday();
     renderToday();
+    if (key === todayKey()) { activeDayKey = null; }
+    else { openDayDetail(key); }
   }
 };
 
