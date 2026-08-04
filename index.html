@@ -2210,18 +2210,29 @@ function autoDetectMachine(name) {
   // Switch to Machine type
   window.setType('machine');
 
-  // Try to find a matching machine name from MACHINE_DATA
+  // Try to find a matching machine name from MACHINE_DATA.
+  // Two passes: exact matches first (across all groups), then substring
+  // matches as a fallback. This avoids "Smith Machine" false-matching
+  // everything — stripping "smith machine" from itself leaves an empty
+  // string, and baseName.includes('') is always true, so it must never
+  // be allowed to win over a real exact match like "Leg Extension".
   const baseName = name.replace(/\s*\([^)]*\)\s*/g, '').trim().toLowerCase();
   let bestMatch = null;
   MACHINE_DATA.forEach(function(group) {
     group.items.forEach(function(item) {
       const itemLower = item.toLowerCase();
-      if (itemLower === baseName || itemLower === bracket ||
-          itemLower.includes(baseName) || baseName.includes(itemLower.replace(/^smith machine\s*/,''))) {
-        if (!bestMatch) bestMatch = item;
-      }
+      if (!bestMatch && (itemLower === baseName || itemLower === bracket)) bestMatch = item;
     });
   });
+  if (!bestMatch) {
+    MACHINE_DATA.forEach(function(group) {
+      group.items.forEach(function(item) {
+        const itemLower = item.toLowerCase();
+        const stripped = itemLower.replace(/^smith machine\s*/,'');
+        if (!bestMatch && (itemLower.includes(baseName) || (stripped && baseName.includes(stripped)))) bestMatch = item;
+      });
+    });
+  }
   // Fallback: try the bracket content itself (e.g. "Smith Machine")
   if (!bestMatch) {
     MACHINE_DATA.forEach(function(group) {
@@ -2356,6 +2367,13 @@ function exRowHTML(e) {
 }
 
 
+function currentTopWeight() {
+  if (exType==='barbell'){const bar=parseFloat(document.getElementById('bbBar').value)||0;let pw=0;plateList.forEach(p=>pw+=p.w*(bbPlates[p.w]||0));return bar+pw*2;}
+  if (exType==='dumbbell') return parseFloat(document.getElementById('dbWeight').value)||0;
+  if (exType==='machine') return parseFloat(document.getElementById('machWeight').value)||0;
+  return parseFloat(document.getElementById('miscWeight').value)||0;
+}
+
 window.buildSetReps = function() {
   var sets = parseInt(document.getElementById('exSets').value) || 0;
   var area = document.getElementById('setRepsArea');
@@ -2363,10 +2381,11 @@ window.buildSetReps = function() {
   var existingReps = [], existingWts = [];
   area.querySelectorAll('.set-rep-input').forEach(function(inp){ existingReps.push(inp.value); });
   area.querySelectorAll('.set-wt-input').forEach(function(inp){ existingWts.push(inp.value); });
+  var topWeight = currentTopWeight();
   var html = '';
   for (var i = 0; i < sets; i++) {
     var rVal = existingReps[i] || '';
-    var wVal = existingWts[i] || '';
+    var wVal = existingWts[i] || (topWeight ? topWeight : '');
     var allBtn = i === 0 ? '<button type="button" class="set-rep-all" onclick="fillAllSets()">&#8594; All</button>' : '';
     html += '<div class="set-rep-row" id="setRow_' + i + '">' +
       '<span class="set-rep-label">Set ' + (i+1) + '</span>' +
