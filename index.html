@@ -1214,7 +1214,7 @@ function renderBb() {
 window.setMach= w => { document.getElementById('machWeight').value=w; syncAllSetWeights(w); };
 const DB_WEIGHTS = [5,10,15,17.5,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100];
 
-function syncAllSetWeights(w) {
+window.syncAllSetWeights = function syncAllSetWeights(w) {
   document.querySelectorAll('#setRepsArea .set-wt-input').forEach(function(inp){ inp.value = w; });
 }
 
@@ -1619,7 +1619,7 @@ window.saveFood = async function() {
   }
 };
 
-function recalcFoodFromQty() {
+window.recalcFoodFromQty = function recalcFoodFromQty() {
   if (!selectedFoodBase) return;
   const qty = parseFloat(document.getElementById('foodQty').value) || 0;
   const factor = qty / 100;
