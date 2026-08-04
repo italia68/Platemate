@@ -281,6 +281,10 @@
         <label class="field-label">Your name</label>
         <input class="field-input" id="authName" placeholder="e.g. Alex" maxlength="30" autocomplete="off" />
       </div>
+      <div id="signupPmIdGroup" style="display:none">
+        <label class="field-label">Choose a unique ID</label>
+        <input class="field-input" id="authPmId" placeholder="e.g. Stallion" maxlength="20" autocomplete="off" />
+      </div>
       <div>
         <label class="field-label">Email</label>
         <input class="field-input" id="authEmail" type="email" placeholder="you@email.com" autocomplete="email" />
@@ -792,6 +796,7 @@ window.switchAuthTab = function(mode) {
   document.getElementById('tabLogin').classList.toggle('active', mode==='login');
   document.getElementById('tabSignup').classList.toggle('active', mode==='signup');
   document.getElementById('signupNameGroup').style.display = mode==='signup' ? 'block' : 'none';
+  document.getElementById('signupPmIdGroup').style.display = mode==='signup' ? 'block' : 'none';
   document.getElementById('forgotLink').style.display = mode==='login' ? 'block' : 'none';
   document.getElementById('forgotSection').style.display = 'none';
   document.getElementById('authBtn').textContent = mode==='login' ? 'Hard Work and Pain' : 'Create Account';
@@ -805,6 +810,7 @@ window.showForgotPassword = function() {
   document.getElementById('resetMsg').textContent = '';
   document.querySelector('.auth-tabs').style.display = 'none';
   document.getElementById('signupNameGroup').style.display = 'none';
+  document.getElementById('signupPmIdGroup').style.display = 'none';
   document.getElementById('authEmail').closest('div').style.display = 'none';
   document.getElementById('authPassword').closest('div').style.display = 'none';
   document.getElementById('authError').style.display = 'none';
@@ -820,6 +826,7 @@ window.cancelForgot = function() {
   document.querySelector('#forgotSection > div').style.display='flex';
   document.querySelector('.auth-tabs').style.display = 'flex';
   document.getElementById('signupNameGroup').style.display = authMode==='signup' ? 'block' : 'none';
+  document.getElementById('signupPmIdGroup').style.display = authMode==='signup' ? 'block' : 'none';
   document.getElementById('authEmail').closest('div').style.display = 'block';
   document.getElementById('authPassword').closest('div').style.display = 'block';
   document.getElementById('authError').style.display = 'block';
@@ -847,6 +854,7 @@ window.doAuth = async function() {
   const email    = document.getElementById('authEmail').value.trim();
   const password = document.getElementById('authPassword').value;
   const name     = document.getElementById('authName').value.trim();
+  const pmId     = document.getElementById('authPmId').value.trim();
   const errEl    = document.getElementById('authError');
   const btn      = document.getElementById('authBtn');
   errEl.textContent = '';
@@ -854,13 +862,24 @@ window.doAuth = async function() {
   try {
     if (authMode === 'signup') {
       if (!name) { errEl.textContent = 'Please enter your name.'; btn.disabled=false; return; }
+      if (!pmId) { errEl.textContent = 'Please choose a unique ID.'; btn.disabled=false; return; }
+      const pmIdKey = pmId.toLowerCase();
+      const takenSnap = await getDoc(doc(db, 'usernames', pmIdKey));
+      if (takenSnap.exists()) {
+        errEl.textContent = 'That ID is already taken. Please choose another.';
+        btn.disabled = false;
+        return;
+      }
       const cred = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(cred.user, { displayName: name });
+      await setDoc(doc(db, 'usernames', pmIdKey), { uid: cred.user.uid, pmId: pmId });
+      await setDoc(doc(db, 'users', cred.user.uid, 'meta', 'profile'), { pmId: pmId });
       emailjs.send("service_st0d6i9", "template_bluekgg", {
         new_user_email: cred.user.email,
         signup_time: new Date().toLocaleString(),
         new_user_name: name,
-        new_user_uid: cred.user.uid
+        new_user_uid: cred.user.uid,
+        new_user_pmid: pmId
       }).catch((err) => console.error("EmailJS error:", err));
     } else {
       await signInWithEmailAndPassword(auth, email, password);
