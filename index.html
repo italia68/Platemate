@@ -1429,6 +1429,7 @@ window.saveCardio = async function() {
     window.closeCardioSheet();
     renderCardioToday();
     renderToday();
+    renderHistory();
     if (chosenCardioKey === todayKey()) { activeDayKey = null; }
     else { openDayDetail(chosenCardioKey); }
   } else {
@@ -1439,6 +1440,7 @@ window.saveCardio = async function() {
     window.closeCardioSheet();
     renderCardioToday();
     renderToday();
+    renderHistory();
     if (key === todayKey()) { activeDayKey = null; }
     else { openDayDetail(key); }
   }
@@ -1453,7 +1455,8 @@ window.delCardio = async function(dayKey,idx) {
   } else {
     await saveCardioDay(dayKey);
   }
-  if(dayKey===todayKey()){ renderCardioToday(); renderToday(); }
+  if(dayKey===todayKey()){ renderCardioToday(); renderToday(); } else { renderDayBody(dayKey); }
+  renderHistory();
 };
 
 
