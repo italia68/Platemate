@@ -1331,16 +1331,23 @@ window.saveExercise = async function() {
 // ── HISTORY ───────────────────────────────────────────────────────────────────
 function renderHistory() {
   const el=document.getElementById('historyBody');
-  const days=Object.keys(workouts).sort((a,b)=>b.localeCompare(a));
+  const allKeys = new Set([...Object.keys(workouts), ...Object.keys(cardioSessions)]);
+  const days=[...allKeys].filter(k => (workouts[k]&&workouts[k].length) || (cardioSessions[k]&&cardioSessions[k].length)).sort((a,b)=>b.localeCompare(a));
   if(!days.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">&#128197;</div>No workouts logged yet.</div>';return;}
   el.innerHTML=days.map(key=>{
-    const exs=workouts[key];
+    const exs=workouts[key]||[];
+    const cardios=cardioSessions[key]||[];
     const vol=exs.reduce((a,e)=>a+(e.type==='dumbbell'?e.weight*2:e.weight)*(Array.isArray(e.reps)?e.reps.reduce((s,r)=>s+r,0):e.sets*(e.reps||0)),0);
     const label=key===todayKey()?`Today &mdash; ${fmtShort(key)}`:fmtShort(key);
+    const totalCount = exs.length + cardios.length;
+    const metaParts = [];
+    if (exs.length) metaParts.push(`${exs.length} exercise${exs.length!==1?'s':''}`);
+    if (cardios.length) metaParts.push(`${cardios.length} cardio`);
+    if (vol) metaParts.push(`${Math.round(vol).toLocaleString()} lb volume`);
     return `<div class="card day-card" onclick="openDayDetail('${key}')">
       <div><div class="card-title">${label}</div>
-      <div class="card-meta">${exs.length} exercise${exs.length!==1?'s':''} &middot; ${Math.round(vol).toLocaleString()} lb volume</div></div>
-      <div class="day-badge">${exs.length}</div></div>`;
+      <div class="card-meta">${metaParts.join(' &middot; ')}</div></div>
+      <div class="day-badge">${totalCount}</div></div>`;
   }).join('');
 }
 window.openDayDetail = function(key) {
