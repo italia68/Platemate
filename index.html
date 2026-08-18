@@ -704,6 +704,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, addDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+import { getMessaging, getToken, onMessage, isSupported as isMessagingSupported } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-messaging.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBBGigDjyeo55wJQWvJkt4W-c_1cbfVsQU",
@@ -719,12 +720,40 @@ const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
+// Workout-reminder push notifications (Firebase Cloud Messaging).
+// Generate this in Firebase Console → Project settings → Cloud Messaging → Web Push certificates,
+// then paste the "Key pair" value here. Reminders can't be enabled until this is set.
+const VAPID_KEY = 'PASTE_YOUR_VAPID_KEY_HERE';
+let messaging = null;
+async function ensureMessaging() {
+  if (messaging) return messaging;
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) return null;
+  try {
+    if (!(await isMessagingSupported())) return null;
+  } catch(e) { return null; }
+  messaging = getMessaging(app);
+  return messaging;
+}
+// Show incoming reminders ourselves while the app is open in the foreground
+// (FCM does not auto-display a system notification in that case).
+ensureMessaging().then(m => {
+  if (!m) return;
+  onMessage(m, payload => {
+    const title = (payload.notification && payload.notification.title) || 'Platemate';
+    const body  = (payload.notification && payload.notification.body)  || "Don't forget to log today's workout!";
+    if (Notification.permission === 'granted') {
+      try { new Notification(title, { body, icon: './icon-192x192.png' }); } catch(e) {}
+    }
+  });
+}).catch(()=>{});
+
 // ── STATE ──────────────────────────────────────────────────────────────────────
 let currentUser = null;
 let workouts = {};
 let cardioSessions = {};
 let nutritionLog = {};
 let nutritionGoals = null;
+let notifSettings = { enabled: false, fcmToken: null };
 let selectedFoodBase = null;
 let editFoodKey = null, editFoodIdx = null;
 let exType = 'barbell';
@@ -920,8 +949,52 @@ async function loadAllData() {
     nSnap.forEach(d => { nutritionLog[d.id] = d.data().foods || []; });
     const gDoc = await getDoc(doc(db, 'users', uid(), 'settings', 'nutritionGoals'));
     nutritionGoals = gDoc.exists() ? gDoc.data() : null;
+    const notifDoc = await getDoc(doc(db, 'users', uid(), 'settings', 'notifications'));
+    notifSettings = notifDoc.exists() ? notifDoc.data() : { enabled: false, fcmToken: null };
   } catch(e) { console.error('Load error', e); }
 }
+
+// ── WORKOUT REMINDER NOTIFICATIONS ──────────────────────────────────────────────
+window.enableWorkoutReminders = async function() {
+  try {
+    if (VAPID_KEY === 'PASTE_YOUR_VAPID_KEY_HERE') {
+      alert('Workout reminders aren\'t set up yet (missing VAPID key). See the setup guide.');
+      return;
+    }
+    const m = await ensureMessaging();
+    if (!m) {
+      alert('Push notifications aren\'t supported in this browser. On iPhone: Share → Add to Home Screen, then open Platemate from the Home Screen icon and try again.');
+      return;
+    }
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') {
+      alert('Notifications are blocked. Enable them for Platemate in your browser or phone settings to get workout reminders.');
+      return;
+    }
+    const reg = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+    const token = await getToken(m, { vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
+    if (!token) { alert('Could not get a notification token. Please try again.'); return; }
+    notifSettings = { enabled: true, fcmToken: token, updatedAt: new Date().toISOString() };
+    await setDoc(doc(db, 'users', uid(), 'settings', 'notifications'), notifSettings);
+    renderProfile();
+  } catch(e) {
+    console.error('Enable reminders error', e);
+    alert('Something went wrong turning on reminders. Please try again.');
+  }
+};
+
+window.disableWorkoutReminders = async function() {
+  try {
+    notifSettings = { enabled: false, fcmToken: notifSettings.fcmToken || null, updatedAt: new Date().toISOString() };
+    await setDoc(doc(db, 'users', uid(), 'settings', 'notifications'), notifSettings);
+    renderProfile();
+  } catch(e) { console.error('Disable reminders error', e); }
+};
+
+window.toggleWorkoutReminders = function() {
+  if (notifSettings.enabled) window.disableWorkoutReminders();
+  else window.enableWorkoutReminders();
+};
 
 async function saveNutritionDay(key) {
   try {
@@ -1842,6 +1915,12 @@ function renderProfile() {
     </div>
     <div class="section-label">Personal Records</div>
     ${prHTML||'<div style="color:var(--muted);font-size:13px">No records yet.</div>'}
+    <div class="section-label">Notifications</div>
+    <div class="setting-row" id="notifToggleRow" onclick="toggleWorkoutReminders()">
+      <span>Workout Reminders</span>
+      <span style="color:${notifSettings.enabled?'var(--gold)':'var(--muted)'};font-weight:600">${notifSettings.enabled?'On':'Off'}</span>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin:-2px 2px 4px 2px">Get a nudge if you haven't logged a workout by evening.</div>
     <div class="section-label">Account</div>
     <div class="setting-row" onclick="doSignOut()"><span>Sign out</span><span style="color:var(--muted)">&#8594;</span></div>`;
 }
@@ -2037,9 +2116,15 @@ window.doSignOut = async function() {
   await signOut(auth);
 };
 
-// Unregister old service workers
+// Register the Firebase Messaging service worker (needed for workout reminder push
+// notifications) and unregister any other/old service workers (e.g. a previous
+// offline-cache SW) so they don't fight over the scope.
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.unregister()));
+  navigator.serviceWorker.register('./firebase-messaging-sw.js').catch(err => console.warn('Messaging SW register failed', err));
+  navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>{
+    const url = (r.active && r.active.scriptURL) || (r.installing && r.installing.scriptURL) || (r.waiting && r.waiting.scriptURL) || '';
+    if (url.indexOf('firebase-messaging-sw.js') === -1) r.unregister();
+  }));
 }
 
 
