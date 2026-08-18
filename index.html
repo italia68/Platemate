@@ -723,7 +723,7 @@ const db   = getFirestore(app);
 // Workout-reminder push notifications (Firebase Cloud Messaging).
 // Generate this in Firebase Console → Project settings → Cloud Messaging → Web Push certificates,
 // then paste the "Key pair" value here. Reminders can't be enabled until this is set.
-const VAPID_KEY = 'PASTE_YOUR_VAPID_KEY_HERE';
+const VAPID_KEY = 'BOXEsTUCqcQFoV68h8xYOunWYV4-5jUf9k1x78tQO0J6nch2pp5M5Lww_Wn9QjlOPGkAvdtm3X6os5MbRcbAwzA';
 let messaging = null;
 async function ensureMessaging() {
   if (messaging) return messaging;
